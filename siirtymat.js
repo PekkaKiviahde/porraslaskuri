@@ -4,7 +4,8 @@ workNavigation.setAttribute('aria-label','Siirry työvaiheeseen');
 workNavigation.className='workNavigation';
 const destinations=[
   ['Piirustukset','arkit'],['Runkoarkki','runkoarkki'],
-  ['Ostolista','buy'],['Toimituserittely','supply']
+  ['Ostolista','buy'],['Toimituserittely','supply'],
+  ['Pyydä tarjous KIDEltä','tarjous']
 ];
 function openWorkStage(target){
   let section=document.getElementById(target);
@@ -17,6 +18,7 @@ function openWorkStage(target){
       if(parent.tagName==='DETAILS')parent.open=true;
     }
     if(target==='buy'||target==='supply')section=section.closest('details').querySelector('summary');
+    if(target==='tarjous')section=section.querySelector('summary');
   }
   section.tabIndex=-1;
   section.focus({preventScroll:true});

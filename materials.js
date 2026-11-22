@@ -37,6 +37,14 @@ function initStockControls() {
 
 function updateMaterials(m,top,front,siteChecks=[]) {
   const buy = el('buy'), supply = el('supply'), download = el('exportSupply');
+  const extra = upperSupplyGroups(m);
+  const link = selectedUrl();
+  const basisForQuote = {dimensions:quoteDimensions(m,siteChecks),lower:null,extra,link:''};
+  if (link) {
+    const drawings = new URL(link);
+    drawings.hash = 'arkit';
+    basisForQuote.link = drawings.href;
+  }
   function showInputError(field,message) {
     download.disabled=true;
     download.onclick=null;
@@ -53,6 +61,8 @@ function updateMaterials(m,top,front,siteChecks=[]) {
       field.scrollIntoView({block:'center'});
     };
     supply.append(jump);
+    for (const box of [buy,supply]) box.insertAdjacentHTML('beforeend',extra.map(supplyGroupHtml).join(''));
+    setQuoteBasis(basisForQuote);
   }
   const invalidField=Object.values(shareFields).map(el).find(field=>!field.validity.valid);
   const length=readField('stockLength'),width=readField('stockWidth'),waste=readField('stockWaste');
@@ -62,7 +72,6 @@ function updateMaterials(m,top,front,siteChecks=[]) {
     showInputError(target,'Tarkista materiaalin mitta tai hukkavara ennen latausta.');
     return;
   }
-  const link=selectedUrl();
   if (!link && invalidField) {
     buy.textContent='Tarkista lähtötiedot.';
     const instruction=siteChecks.find(text=>text.startsWith('Anna mitta')) || 'Tarkista lähtötieto ennen latausta.';
@@ -80,7 +89,7 @@ function updateMaterials(m,top,front,siteChecks=[]) {
   const separate=panels.some(p=>p.state==='yes')?' Valitut päädyt hinnoitellaan erikseen, kun materiaali ja rakenne on vahvistettu.':'';
   const pending=panels.some(p=>p.state==='open')?' Vahvista avoin päätyvalinta ennen tilausta.':'';
   const endNote='Alimman boksin päädyt ('+endSummary+').'+separate+pending;
-  const scopeNote='Alaboksin pintamateriaalien tarjousmäärät perustuvat näkyvien pintojen alaan. Pakkauskoot ja lautaleveydet ovat demotietoja. Tarkista parketin hyötyleveys, levyjen laatu ja sahausjako ennen tilausta. Runkojäsenten, yläsyöksyn, liiman ja kiinnikkeiden määrät edellyttävät erillistä osaluetteloa.';
+  const scopeNote='Alaboksin pintalevyjen ja parkettien määräarvio perustuu näkyvien pintojen alaan. Pakkauskoot ja lautaleveydet ovat demotietoja. KIDE tarkentaa tuotteen hyötyleveyden, levyjen laadun ja sahausjaon ennen tilausta.';
   const note=endNote+' '+scopeNote;
   function productTable(showUse) {
     return '<table class="materialTable"><thead><tr><th scope="col">Materiaali</th><th scope="col">Määräarvio</th></tr></thead><tbody>'+
@@ -95,19 +104,29 @@ function updateMaterials(m,top,front,siteChecks=[]) {
     ? 'Luonnos · aukko '+opening+', vapaa kulkukorkeus '+headroomLabel(m,opening)+' mm. '+headroomWarning(m,opening) : '';
   const review=headroomStatus?'<p>'+headroomStatus+'</p>':'';
   const delivery=rows.map(r=>[r.product,r.size,r.quantity,r.unit]);
-  const brief='<p>Alaboksin pintalevyt ja parketit. '+endNote+'</p>';
+  const frameRow=['Alaboksin ja kääntötason runkopuut','Poikkileikkaukset ja juoksumetrit vahvistetaan runkosuunnitelmasta','Avoin',''];
+  basisForQuote.lower={
+    key:'lower', title:'Alaboksi ja kääntötaso',
+    rows:[...rows.map(r=>[r.product,r.size+' · '+r.uses.join(', ')+' · netto '+num(r.area,2)+' m²',r.quantity,r.unit]),frameRow],
+    note:'Askelpinnan levy '+top.board+' mm ja parketti '+top.wood+' mm. Otsapinnan levy '+front.board+
+      ' mm ja parketti '+front.wood+' mm. Hukkavara '+waste.toLocaleString('fi-FI')+' %. '+note
+  };
+  setQuoteBasis(basisForQuote);
+  const brief='<h3>Alaboksi ja kääntötaso</h3><p>'+endNote+'</p>';
+  const extraTables=extra.map(supplyGroupHtml).join('');
   for(const box of [buy,supply]){
     const open=box.querySelector('details')?.open?' open':'';
     const basisDetails='<details'+open+'><summary>Laskentaperusteet</summary><p>'+basis+'</p><p>'+scopeNote+'</p></details>';
-    box.innerHTML=brief+review+productTable(box===buy)+basisDetails;
+    box.innerHTML=brief+review+productTable(box===buy)+'<p><b>'+frameRow[0]+'.</b> '+frameRow[1]+'.</p>'+basisDetails+extraTables;
   }
   download.onclick=link?()=>{
     const supplierUrl=new URL(link);
     supplierUrl.hash='supply';
     const siteRows=siteChecks.length?[['Työmaan tilavaraustarkistus',siteChecks.join(' ')]]:[];
     const reviewRows=headroomStatus?[[headroomStatus]]:[];
-    const csv=[['Alaboksin pintamateriaalit · tarjousarvio'],[basis],...reviewRows,...siteRows,['Avaa laskuri näillä valinnoilla',supplierUrl.href],headers,...delivery,[note]].map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(';')).join('\r\n');
+    const extraRows=extra.flatMap(group=>[[group.title],...group.rows,[group.note]]);
+    const csv=[['Portaikon materiaalit · tarjousarvio'],[basisForQuote.dimensions],[basis],...reviewRows,...siteRows,['Avaa laskuri näillä valinnoilla',supplierUrl.href],['Alaboksi ja kääntötaso'],headers,...delivery,frameRow,[note],...extraRows].map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(';')).join('\r\n');
     const url=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'}));
-    const a=document.createElement('a');a.href=url;a.download='alaboksi-toimituserittely.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    const a=document.createElement('a');a.href=url;a.download='portaikon-toimituserittely.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   }:null;
 }

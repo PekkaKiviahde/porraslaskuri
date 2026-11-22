@@ -28,6 +28,17 @@ svg [data-viiva="runkoleikkaus"]{stroke-width:var(--runkoleikkaus)}
 @media screen and (min-width:781px){.metrics{grid-template-columns:repeat(4,1fr)}}
 #stride{border-left:4px solid #194640;padding:.65rem .9rem;background:#e7eeeb;margin:0 0 1rem}#metrics{margin-bottom:.4rem}#goingDiagram svg{width:100%;min-width:0;height:auto;display:block} .goingField{grid-column:span 2;display:grid;grid-template-columns:minmax(100px,1fr) minmax(180px,2fr);gap:10px;align-items:center}#openingButtons span{display:block;font-size:.92em;font-weight:normal;margin-top:.4em}#openingButtons b{display:block}#downloads button{margin:.3rem;padding:.55rem} @media(max-width:600px){.goingField{grid-column:1/-1;grid-template-columns:1fr}.goingField svg{max-width:390px}}
 @media(max-width:480px){#applyGoing,.dismiss,#exportSupply,#printFrame{min-height:44px}}#strideBasis{background:transparent;border:0;padding:0;margin:.2rem 0 1rem}#strideBasis summary{font-weight:normal}#strideBasis p{margin:.4rem 0}.workNavigation{display:flex;flex-wrap:wrap;gap:4px 14px;margin:-8px 0 12px}.workNavigation a{display:inline-flex;align-items:center;min-height:44px;color:#194640;text-underline-offset:3px}@media print{.workNavigation{display:none}}
+#tarjous{border-left:4px solid #194640}
+#quoteForm{grid-template-columns:minmax(0,1fr);max-width:44rem;gap:.9rem}
+#quoteForm fieldset{min-width:0;margin:0;padding:.5rem .9rem;border:1px solid #82958f}
+#quoteForm legend{font-weight:bold}
+#quoteForm .quoteOption{display:flex;gap:.55rem;align-items:center;min-height:44px;font-weight:normal}
+#quoteForm .quoteOption input{width:auto;margin:0;accent-color:#194640}
+#quoteForm details,#quoteForm p{margin:0}
+#quotePreview{white-space:pre-line;overflow-wrap:anywhere}
+#quoteForm #quotePreview{margin-top:.7rem}
+#quoteSend{justify-self:start;padding:.65rem 1.2rem;border:0;border-radius:4px;background:#194640;color:white}
+#quoteSend:disabled{background:#52605d;cursor:default}
 </style><link rel="stylesheet" href="print-arkit.css?v=20261122-tyomaa" media="print"><main><header><h1>Portaikon tilavaraus</h1><p>Asunnon sisäinen paluuporras · Arkkitehdin luonnos</p></header>
 <form id="inputs" onsubmit="return false"><div><div class="measureTitle"><label for="storey">Kerroskorkeus (mm)</label><button class="helpDot" type="button" aria-label="Kerroskorkeuden mittauspinnat" aria-expanded="false" aria-controls="infoStorey">i</button></div><p hidden id="infoStorey">Mittaa alakerran valmiin lattian yläpinnasta yläkerran valmiin lattian yläpintaan.</p><input required type="number" min="1" step="1" id="storey" value="3250"></div>
 <div><div class="measureTitle"><label for="floor">Välipohjan kokonaispaksuus (mm)</label><button class="helpDot" type="button" aria-label="Välipohjan mittauspinnat" aria-expanded="false" aria-controls="infoFloor">i</button></div><p hidden id="infoFloor">Mittaa alakerran valmiista kattopinnasta yläkerran valmiin lattian yläpintaan. Mukaan kuuluvat myös katon ja lattian pintakerrokset.</p><input required type="number" min="1" max="3000" step="1" id="floor" value="550"></div>
@@ -46,7 +57,31 @@ svg [data-viiva="runkoleikkaus"]{stroke-width:var(--runkoleikkaus)}
 <details id="carpenter"><summary>Timpurin kuvat ja osaluettelo</summary><article id="end-preview"><h3>Alimman boksin päätykappaleet</h3><div class="panelPair"><div id="end-front"></div><section><h4>Osaluettelo · päätykappaleet</h4><div id="end-list" aria-live="polite"></div></section></div></article><section><h2>Alaboksin runkopinnat</h2><p>Rungon yläpinnan korko saadaan vähentämällä valmiista askelpinnasta parketti ja pintalevy. Otsapinnassa vähennys tehdään vaakasuunnassa kohti takaseinää. Molemmille pinnoille voi valita eri kerrokset.</p>
 <div class="grid"><article><h3>Askelpinta</h3><label>Alaboksin pintalevy (mm)<select id="topBoard"><option>15</option><option>18</option><option selected>20</option></select></label><label>Parketin koko paksuus (mm)<input id="topWood" type="number" min="1" step="1" value="15"></label></article><article><h3>Otsapinta</h3><label>Alaboksin pintalevy (mm)<select id="frontBoard"><option>15</option><option>18</option><option selected>20</option></select></label><label>Parketin koko paksuus (mm)<input id="frontWood" type="number" min="1" step="1" value="15"></label></article></div><p>Pintalevyn lähtöoletus on 20 mm. Varmista parketin koko paksuus kohteen laudasta.</p>
 <p>Tuote-esimerkkejä ovat Timberwise Lehtikuusi 14 mm sekä Kährs Tammi Olof 15 mm. Pintasäle sisältyy kokonaispaksuuteen. <a href="https://timberwise.fi/tuote/lehtikuusi/">Timberwisen tuotetiedot</a> · <a href="https://www.kahrs.com/api/Tds/Pdf?e=4754&amp;l=fi-FI&amp;n=151N7BEKFWKW240&amp;room=">Kährsin tuotekortti</a></p>
-<p id="frameNote"></p><details open><summary>Timpurin runkoarkki</summary><section id="runkoarkki"><div id="narrowSection" hidden></div><div class="sheettools"><button type="button" id="sheetZoom" aria-pressed="false">Suurenna piirustus</button></div><div id="sheetScroll"><div id="assemblySheet"></div></div></section></details><details><summary>Rungon erilliset mittakuvat</summary><div class="pairscroll" id="runkopari"><div class="sectionpair"><article id="runko"><h3>Rungon pituusleikkaus M–M</h3><div id="frameDrawing"></div><p>Vaakamitat valmiista takaseinästä. Korkeudet alakerran valmiista lattiasta. Mitat millimetreinä.</p></article><article id="runkopoikki"><h3>Rungon mittakuva edestä</h3><div id="crossFrame"></div><p>Katse alapäästä takaseinään. Kaikki näkyvät rungon reunat 0,25 mm. Korkeudet valmiista lattiasta.</p><p id="crossBasis"></p></article></div></div></details></section></details><section id="materials"><h2>Hankinta ja toimitus</h2><details open><summary>Hankinnan ostolista</summary><div id="buy"></div></details><details open><summary>Tavarantoimittajan toimituserittely</summary><div id="supply"></div><button type="button" id="exportSupply">Lataa toimituserittely CSV</button></details></section><footer>Tilavarausmitat koskevat valmiita pintoja. Mahdolliset ulkoreunojen rakennevarat lisätään kohteessa. Kulkukorkeudet koskevat aukon reunaa ja tasaista alapintaa. Tarkista kohteessa myös palkit, kotelot ja ylimmän askelman limitys lattialiittymässä. <a href="https://www.finlex.fi/fi/lainsaadanto/2017/1007">Mitoitusperuste · asetus 1007/2017</a></footer></div><details id="feedback"><summary>Palautekeskustelu</summary>
+<p id="frameNote"></p><details open><summary>Timpurin runkoarkki</summary><section id="runkoarkki"><div id="narrowSection" hidden></div><div class="sheettools"><button type="button" id="sheetZoom" aria-pressed="false">Suurenna piirustus</button></div><div id="sheetScroll"><div id="assemblySheet"></div></div></section></details><details><summary>Rungon erilliset mittakuvat</summary><div class="pairscroll" id="runkopari"><div class="sectionpair"><article id="runko"><h3>Rungon pituusleikkaus M–M</h3><div id="frameDrawing"></div><p>Vaakamitat valmiista takaseinästä. Korkeudet alakerran valmiista lattiasta. Mitat millimetreinä.</p></article><article id="runkopoikki"><h3>Rungon mittakuva edestä</h3><div id="crossFrame"></div><p>Katse alapäästä takaseinään. Kaikki näkyvät rungon reunat 0,25 mm. Korkeudet valmiista lattiasta.</p><p id="crossBasis"></p></article></div></div></details></section></details><section id="materials"><h2>Hankinta ja toimitus</h2><details open><summary>Hankinnan ostolista</summary><div id="buy"></div></details><details open><summary>Tavarantoimittajan toimituserittely</summary><div id="supply"></div><button type="button" id="exportSupply">Lataa toimituserittely CSV</button></details>
+<details id="tarjous">
+<summary>Pyydä tarjous KIDEltä</summary>
+<p>Valitse toimituserät. Portaikon mitat ja valittujen erien määräarviot tulevat mukaan.</p>
+<form id="quoteForm" method="post" action="https://docs.google.com/forms/d/e/1FAIpQLSeo2rHaoUPEGuiwwnBsuAd-qj6AQZ9IZlX28a5T8Y8l7QjO5w/formResponse" target="_blank" rel="noopener noreferrer">
+  <fieldset id="quoteScopes"><legend>Mistä pyydät tarjouksen?</legend>
+    <label class="quoteOption"><input type="checkbox" value="lower" checked> Alaboksi ja kääntötaso · runkopuut, pintalevyt ja parketit</label>
+    <label class="quoteOption"><input type="checkbox" value="upper" checked> Yläaskelmat · puuosat ja parketit</label>
+    <label class="quoteOption"><input type="checkbox" value="steel" checked> Yläsyöksyn metallirunko ja askelkannakkeet</label>
+  </fieldset>
+  <fieldset id="quoteParquet"><legend>Oletko jo valinnut parketin?</legend>
+    <label class="quoteOption"><input id="quoteChosen" type="radio" name="parquetMode" value="chosen" required> Olen valinnut parketin</label>
+    <label class="quoteOption"><input id="quoteSuggest" type="radio" name="parquetMode" value="suggest" required> Toivon KIDEn tuote-ehdotusta</label>
+  </fieldset>
+  <label id="quoteProductLabel" hidden>Valitun parketin nimi tai tuotekoodi<input id="quoteProduct" type="text" maxlength="160" disabled></label>
+  <label>Sähköposti tai puhelinnumero vastausta varten<input id="quoteContact" type="text" name="entry.1183719507" maxlength="180" required></label>
+  <details><summary>Katso lähetettävät mitat ja määrät</summary><p id="quotePreview"></p></details>
+  <input type="hidden" id="quoteMaterials" name="entry.1090514694">
+  <input type="hidden" id="quotePreference" name="entry.354014929">
+  <p id="quoteIssue" role="status" hidden></p>
+  <button type="submit" id="quoteSend" disabled>Lähetä tarjouspyyntö</button>
+  <small>Kuittaus avautuu uuteen välilehteen. KIDE käyttää yhteystietoasi tarjouspyyntöön vastaamiseen.</small>
+</form>
+</details>
+</section><footer>Tilavarausmitat koskevat valmiita pintoja. Mahdolliset ulkoreunojen rakennevarat lisätään kohteessa. Kulkukorkeudet koskevat aukon reunaa ja tasaista alapintaa. Tarkista kohteessa myös palkit, kotelot ja ylimmän askelman limitys lattialiittymässä. <a href="https://www.finlex.fi/fi/lainsaadanto/2017/1007">Mitoitusperuste · asetus 1007/2017</a></footer></div><details id="feedback"><summary>Palautekeskustelu</summary>
 <p>Missä kuvassa huomasit virheen tai mitä muuttaisit? Viestisi menee laskurin kehittäjälle.</p>
 <div id="feedbackHistory" aria-label="Tämän käynnin viestit"></div>
 <form id="feedbackForm" method="post" action="https://docs.google.com/forms/d/e/1FAIpQLSfdCbaVCbprC9l2OoBw_eStLkESyYojKCtVgdwmDmy-QO8Ihw/formResponse?embedded=true" target="feedbackReceipt">
@@ -55,7 +90,7 @@ svg [data-viiva="runkoleikkaus"]{stroke-width:var(--runkoleikkaus)}
 <input type="hidden" name="entry.497987231" id="feedbackPayload"><a id="feedbackAttachment" href="https://docs.google.com/forms/d/e/1FAIpQLSd4msn92tCHcH9Jy_EyBPh6xHZ8fvRgyrN36X5B2xtVgenZsw/viewform" target="_blank" rel="noopener">Lisää kuvakaappaus tai tiedosto</a><small>Rajaa kuvakaappaus piirustukseen. Peitä asiakkaan nimi ja kohteen osoite ennen lähettämistä.</small><small>Liite avataan Google-lomakkeella. Kirjaudu Googleen, valitse tiedosto ja lähetä viesti siellä. Pelkän tekstin voit lähettää tästä ilman kirjautumista.</small><button type="submit">Lähetä tekstipalaute</button></form>
 <div id="feedbackAck" hidden><p>Vastaanottajan kuittaus</p><iframe name="feedbackReceipt" title="Google Formsin vastaus lähetykseen" style="width:100%;height:12rem;border:0"></iframe></div>
 <a href="https://docs.google.com/forms/d/e/1FAIpQLSfdCbaVCbprC9l2OoBw_eStLkESyYojKCtVgdwmDmy-QO8Ihw/viewform" target="_blank" rel="noopener">Avaa palautelomake erikseen</a></details></main>
-<script defer src="siirtymat.js?v=20261122-tyomaa"></script><script src="porras-ifc.js?v=20261122-tyomaa"></script><script src="qrcode.js"></script><script src="arkkitehti.js?v=20261122-tyomaa"></script><script src="materials.js?v=20261122-tyomaa"></script><script>
+<script defer src="siirtymat.js?v=20261122-tarjous"></script><script src="porras-ifc.js?v=20261122-tyomaa"></script><script src="qrcode.js"></script><script src="arkkitehti.js?v=20261122-tyomaa"></script><script src="tarjous.js?v=20261122-1"></script><script src="materials.js?v=20261122-tarjous"></script><script>
 'use strict';
 const el=id=>document.getElementById(id);
 const num=(v,p=0)=>v.toLocaleString('fi-FI',{minimumFractionDigits:p,maximumFractionDigits:p});
@@ -633,6 +668,7 @@ function render(){
  updateShareQr();
  el('goingDiagram').innerHTML=goingDiagram(Number(el('going').value));
  if(issues.length){
+  setQuoteBasis(null,issues.join(' '));
   reviewDimensions='';el('strideAck').checked=false;frameCanBePrinted=false;
   for(const id of ['printSheets','printFrame','exportIfc','exportSupply'])el(id).disabled=true;
   el('exportSupply').onclick=null;
@@ -675,6 +711,7 @@ for(const id of [...siteInputs,'measured','topBoard','topWood','frontBoard','fro
 el('inputs').addEventListener('input',render);el('inputs').addEventListener('change',render);
 el('rows').addEventListener('click',e=>{let b=e.target.closest('button[data-height]');if(b){el('storey').value=b.dataset.height;render();el('choiceDialog').close();el('sheet1').open=el('sheet2').open=true;el('sheet1').scrollIntoView()}});
 initStockControls();
+initQuoteForm();
 const shareFields={
  etenema:'going',kerroskorkeus:'storey',valipohja:'floor',katisyys:'hand',vasen:'end-left',oikea:'end-right',
  aukko:'choice',kerros:'siteH',vapaaKorkeus:'siteRoom',leveys:'siteW',syvyys:'siteD',
@@ -716,7 +753,7 @@ for(const button of document.querySelectorAll('.helpDot')){
 }
 function selectedUrl(){
  const url=new URL(location.pathname,location.origin);
- if(["#arkit","#runkoarkki","#buy","#supply"].includes(location.hash))url.hash=location.hash;
+ if(["#arkit","#runkoarkki","#buy","#supply","#tarjous"].includes(location.hash))url.hash=location.hash;
  for(const [key,id] of Object.entries(shareFields)){
   const field=el(id);
   if(field.value===''&&unfinishedWorkFields.has(id)&&!field.validity.badInput){
