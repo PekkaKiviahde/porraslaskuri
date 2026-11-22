@@ -426,8 +426,24 @@ function render(){
  el('shareStatus').textContent='';el('manualShare').hidden=true;
  const site=el('measured').checked,room=site?readField('siteRoom'):el('room').valueAsNumber,floor=site?readField('siteH')-room:el('floor').valueAsNumber,right=el('hand').value==='right';
  el('room').disabled=site;el('floor').disabled=site;el('siteReport').textContent='';
- const valid=Number.isFinite(room)&&room>=2500&&room<=3000&&Number.isFinite(floor)&&floor>0&&floor<=3000;
- el('results').hidden=!valid;el('error').textContent=valid?'':site?'Tarkista molemmat työmaakorot. Huonekorkeuden tulee olla 2 500–3 000 mm ja välipohjan 1–3 000 mm.':'Anna huonekorkeus 2 500–3 000 mm ja välipohjan paksuus 1–3 000 mm kokonaisina millimetreinä.';updateShareQr();if(!valid)return;
+ const issues=[];
+ function checkHeight(id,label,min,max){
+  const field=el(id),v=field.valueAsNumber;
+  let message='';
+  if(!Number.isFinite(v))message=label+' puuttuu tai on keskeneräinen.';
+  else if(v<min||v>max)message=label+' on '+num(v,1)+' mm. Laskurin alue on '+num(min)+'–'+num(max)+' mm.';
+  else if(field.validity.stepMismatch)message=label+' pitää antaa kokonaisina millimetreinä.';
+  field.setAttribute('aria-invalid',String(Boolean(message)));
+  if(message)issues.push(message);
+ }
+ checkHeight(site?'siteRoom':'room',site?'Työmaalla mitattu huonekorkeus':'Huonekorkeus',2500,3000);
+ if(!site)checkHeight('floor','Välipohjan paksuus',1,3000);
+ else if(!Number.isFinite(readField('siteH')))issues.push('Työmaan mitta valmiista lattiasta valmiiseen lattiaan puuttuu.');
+ else if(Number.isFinite(room)&&(floor<=0||floor>3000))issues.push('Työmaakorkojen erotus on '+num(floor,1)+' mm. Tarkista lattioiden välinen korkeus ja huonekorkeus.');
+ el('results').hidden=issues.length>0;
+ el('error').textContent=issues.join(' ');
+ updateShareQr();
+ if(issues.length)return;
  const m=model(room,floor);drawArchitectSheets(m,right);renderEndPanels(m,right);
  el('metrics').innerHTML='<div>Tilavaraus, leveys × syvyys<b>1 800 × '+num(m.depth)+' mm</b></div><div>Kerroskorkeus<b>'+num(m.H)+' mm</b></div><div>Yksi nousu<b>'+num(m.rise,1)+' mm</b></div>';
  el('lower').innerHTML=plan(m,right,'ala');
