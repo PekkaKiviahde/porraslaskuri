@@ -6,6 +6,9 @@ details{padding:14px;background:#fff;border:1px solid #c5cfca;margin:16px 0}summ
 @media print{@page{size:A3 landscape;margin:0}body *{visibility:hidden}#runkoarkki,#runkoarkki *{visibility:visible}body:has(#runkoarkki) main{position:static}main>:not(#results),#results>:not(section:has(#runkoarkki)),section:has(>#runkoarkki)>:not(#runkoarkki),#runkoarkki .sheettools{display:none!important}#runkoarkki{position:absolute;left:0;top:0;width:420mm;border:0;margin:0}#assemblySheet,#assemblySheet.large{min-width:0}#sheetScroll{overflow:visible}}
 #arkit nav{padding:12px 0}#arkit article{margin-bottom:12px;padding:0;overflow:auto}#arkit svg{min-width:1050px}#arkit svg text{stroke:none;fill:#172526;font-family:Arial,sans-serif}
 @media print{body:has(#arkit) main>:not(#results),body:has(#arkit) #results>:not(#arkit),#arkit nav{display:none!important}body #results>#arkit{display:block!important}#arkit,#arkit *{visibility:visible}#arkit article{width:420mm;height:297mm;margin:0;border:0;overflow:hidden;break-after:page}#arkit article:last-child{break-after:auto}#arkit svg{min-width:0;width:420mm;height:297mm}}
+.materialTable th:first-child,.materialTable td:first-child{text-align:left;overflow-wrap:anywhere}
+.materialTable th:last-child,.materialTable td:last-child{width:1%;white-space:nowrap;vertical-align:top}
+.materialTable td:last-child{font-weight:bold}
 /* Näytön ja tulosteen viivat ovat fyysisiä leveyksiä kaikissa SVG-näkymissä. */
 :root{--reuna:0.25mm;--mitta:0.13mm;--runkoleikkaus:0.50mm}
 svg [data-viiva]{vector-effect:non-scaling-stroke;stroke:#233537;stroke-linecap:butt;stroke-linejoin:miter}
@@ -23,7 +26,9 @@ svg [data-viiva="runkoleikkaus"]{stroke-width:var(--runkoleikkaus)}
  #openingView svg{width:100%;height:auto}#openingView p{font-size:16px}#openingView{overflow:auto}#openingView.zoom article{min-width:720px}
 }
 @media screen and (min-width:781px){.metrics{grid-template-columns:repeat(4,1fr)}}
-#stride{border-left:4px solid #194640;padding:.65rem .9rem;background:#e7eeeb;margin:0 0 1rem}#metrics{margin-bottom:.4rem}#goingDiagram svg{width:100%;min-width:0;height:auto;display:block} .goingField{grid-column:span 2;display:grid;grid-template-columns:minmax(100px,1fr) minmax(180px,2fr);gap:10px;align-items:center}#openingButtons span{display:block;font-size:.92em;font-weight:normal;margin-top:.4em}#openingButtons b{display:block}#downloads button{margin:.3rem;padding:.55rem} @media(max-width:600px){.goingField{grid-column:1/-1;grid-template-columns:1fr}.goingField svg{max-width:390px}} </style><link rel="stylesheet" href="print-arkit.css" media="print"><main><header><h1>Portaikon tilavaraus</h1><p>Asunnon sisäinen paluuporras · Arkkitehdin luonnos</p></header>
+#stride{border-left:4px solid #194640;padding:.65rem .9rem;background:#e7eeeb;margin:0 0 1rem}#metrics{margin-bottom:.4rem}#goingDiagram svg{width:100%;min-width:0;height:auto;display:block} .goingField{grid-column:span 2;display:grid;grid-template-columns:minmax(100px,1fr) minmax(180px,2fr);gap:10px;align-items:center}#openingButtons span{display:block;font-size:.92em;font-weight:normal;margin-top:.4em}#openingButtons b{display:block}#downloads button{margin:.3rem;padding:.55rem} @media(max-width:600px){.goingField{grid-column:1/-1;grid-template-columns:1fr}.goingField svg{max-width:390px}}
+@media(max-width:480px){#applyGoing,.dismiss,#exportSupply,#printFrame{min-height:44px}}#strideBasis{background:transparent;border:0;padding:0;margin:.2rem 0 1rem}#strideBasis summary{font-weight:normal}#strideBasis p{margin:.4rem 0}.workNavigation{display:flex;flex-wrap:wrap;gap:4px 14px;margin:-8px 0 12px}.workNavigation a{display:inline-flex;align-items:center;min-height:44px;color:#194640;text-underline-offset:3px}@media print{.workNavigation{display:none}}
+</style><link rel="stylesheet" href="print-arkit.css?v=20261122-tiimi" media="print"><main><header><h1>Portaikon tilavaraus</h1><p>Asunnon sisäinen paluuporras · Arkkitehdin luonnos</p></header>
 <form id="inputs" onsubmit="return false"><div><div class="measureTitle"><label for="storey">Kerroskorkeus (mm)</label><button class="helpDot" type="button" aria-label="Kerroskorkeuden mittauspinnat" aria-expanded="false" aria-controls="infoStorey">i</button></div><p hidden id="infoStorey">Mittaa alakerran valmiin lattian yläpinnasta yläkerran valmiin lattian yläpintaan.</p><input required type="number" min="1" step="1" id="storey" value="3250"></div>
 <div><div class="measureTitle"><label for="floor">Välipohjan kokonaispaksuus (mm)</label><button class="helpDot" type="button" aria-label="Välipohjan mittauspinnat" aria-expanded="false" aria-controls="infoFloor">i</button></div><p hidden id="infoFloor">Mittaa alakerran valmiista kattopinnasta yläkerran valmiin lattian yläpintaan. Mukaan kuuluvat myös katon ja lattian pintakerrokset.</p><input required type="number" min="1" max="3000" step="1" id="floor" value="550"></div>
 <div><div class="measureTitle"><label for="clearRoom">Vapaa huonekorkeus</label><button class="helpDot" type="button" aria-label="Vapaan huonekorkeuden mittauspinnat" aria-expanded="false" aria-controls="infoRoom">i</button></div><p hidden id="infoRoom">Alakerran valmiin lattian yläpinnasta valmiin katon alapintaan. Laskuri vähentää kerroskorkeudesta välipohjan kokonaispaksuuden.</p><output id="clearRoom" for="storey floor" aria-live="polite"></output></div><div class="goingField"><label>Etenemä (mm)<select id="going"><option>250</option><option>255</option><option>260</option><option>265</option><option>270</option></select></label><div id="goingDiagram"></div></div><label>Kapeat askelmat noustessa<select id="hand"><option value="left">Vasemmalla</option><option value="right" selected>Oikealla</option></select></label><fieldset style='grid-column:1/-1;min-width:0'><legend>Alimman boksin päädyt</legend><p>Katso portaita alhaalta ylöspäin.</p><div class='fields'><label>Vasemmalle päätykappale?<select id='end-left'><option value='open'>Avoin</option><option value='yes'>Kyllä</option><option value='no'>Ei</option></select></label><label>Oikealle päätykappale?<select id='end-right'><option value='open'>Avoin</option><option value='yes'>Kyllä</option><option value='no'>Ei</option></select></label></div></fieldset></form><details id="shareMenu"><summary>Jaa laskuri näillä valinnoilla</summary><div class="shareControls"><div id="shareQr"></div><div><p>Skannaa puhelimen kameralla tai kopioi linkki.</p><button type="button" id="copyShare">Kopioi linkki näillä valinnoilla</button> <span id="shareStatus" role="status"></span></div></div><label id="manualShare" hidden>Jaettava linkki<input id="shareUrl" readonly type="url"></label></details><details id="sitebox"><summary>Työmaan tarkemitat</summary><p>Mittaa korkeudet samasta alakerran valmiin lattian lähtötasosta ±0,000. Keskeneräisessä kohteessa siirrä suunnitellut valmiit pinnat korkomerkein. Mittaa tila useasta kohdasta ja syötä pienin vapaa leveys ja syvyys.</p><div class="fields">
@@ -32,7 +37,7 @@ svg [data-viiva="runkoleikkaus"]{stroke-width:var(--runkoleikkaus)}
 <label>Vapaa leveys sivupintojen välissä (mm)<input id="siteW" type="number" step="1" min="1"></label>
 <label>Vapaa syvyys takaseinästä alapään tilarajaan (mm)<input id="siteD" type="number" step="1" min="1"></label></div>
 <label class="check"><input type="checkbox" id="measured"> Käytä työmaan korkoja kaikissa piirustuksissa ja runkotaulukossa</label><p id="siteReport" role="status"></p></details>
-<p id="error" class="err" role="status"></p><div id="results"><a class="feedbackJump" href="#feedback">Anna palautetta kuvasta</a><h2>Arkkitehdin piirustukset</h2><div class="metrics" id="metrics" aria-live="polite"></div><p id="stride" aria-live="polite"></p><fieldset id="strideReview" hidden><legend>Valitse etenemä</legend><p id="goingAdvice"></p><button type="button" id="applyGoing" hidden></button><p id="keepGoing"></p><label class="check"><input id="strideAck" type="checkbox">Olen tarkistanut tämän mitoituksen ja hyväksyn poikkeaman askelrytmin suosituksesta.</label><p>Kuittaa ennen PDF- tai IFC-vientiä. Mitoituksen muutos vaatii uuden kuittauksen.</p></fieldset>
+<p id="error" class="err" role="status"></p><div id="results"><a class="feedbackJump" href="#feedback">Anna palautetta kuvasta</a><h2>Arkkitehdin piirustukset</h2><div class="metrics" id="metrics" aria-live="polite"></div><p id="stride" aria-live="polite"></p><details id="strideBasis"><summary>Askelrytmin mitoitusperuste</summary><p>Asuinhuoneiston sisäportaassa nousun enimmäismitta on 190 mm. <a href="https://admin.espoo.fi/sites/default/files/2021-10/Espoon%20esteett%C3%B6m%C3%A4n%20rakentamisen%20ohje_0.pdf">Espoon ohje</a> · <a href="https://www.finlex.fi/fi/lainsaadanto/2017/1007">Asetus 1007/2017, 4 §</a>.</p></details><fieldset id="strideReview" hidden><legend>Valitse etenemä</legend><p id="goingAdvice"></p><button type="button" id="applyGoing" hidden></button><label class="check"><input id="strideAck" type="checkbox"><span id="keepGoing"></span></label><small>Kuittaus koskee vain näitä mittoja.</small></fieldset>
 <button type="button" id="openChoices" aria-haspopup="dialog">Avaa arkkitehdin valintataulukko</button><dialog id="choiceDialog" aria-labelledby="choiceHeading"><button type="button" class="dismiss" autofocus>Sulje</button><h2 id="choiceHeading">Arkkitehdin valintataulukko</h2><p>Kaikki mitat millimetreinä. Valitse kerroskorkeus riviltä päivittääksesi piirustukset. Aukkopituudet mitataan valmiista takaseinästä.</p><div class="scroll"><table><thead><tr><th>Kerroskorkeus</th><th>Vapaa huonekorkeus</th><th>Nousut</th><th>Tila L × S</th><th>Yläsyöksyn aukko A/B</th><th>Alaboksin aukko A</th><th>Alaboksin aukko B</th><th>Vapaa korkeus A</th><th>Vapaa korkeus B</th></tr></thead><tbody id="rows"></tbody></table></div></dialog><details id="downloads"><summary>Lataa piirustukset ja tietomalli</summary><button type="button" id="printSheets">Tallenna A3-piirustukset PDF-tiedostoksi</button><button type="button" id="exportIfc">Lataa portaan tilavarausmalli (IFC4)</button><p>Valitse tulostusikkunassa Tallenna PDF-tiedostona. IFC sisältää portaan valmiin ulkomuodon millimetreinä.</p></details><section id="mobileOpenings" aria-label="Aukkojen vertailu"><h2>Valitse aukko</h2><div id="openingButtons"><button type="button" data-opening="A">A · Suorakaiteinen aukko<strong></strong></button><button type="button" data-opening="B">B · Porrastettu aukko<strong></strong></button></div><p id="openingFacts"></p><button type="button" id="openingZoom" aria-pressed="false">Suurenna mittakuva</button><div id="openingView"></div></section><section id="arkit"><details open id="sheet1"><summary>Arkki 1 · Portaikon valmiit mitat</summary><article id="ark1"></article></details><details open id="sheet2"><summary>Arkki 2 · A- ja B-aukkojen vertailu</summary><article id="ark2"></article></details></section><details id="alakerta"><summary>Alakerran pohja</summary><div class="grid"><figure id="lower"></figure><article id="dims"></article></div>
 </details><details id="pituudet"><summary>Yläkerran aukko ja pituusleikkaus L–L</summary><p>A ja B on kohdistettu samaan valmiiseen takaseinään. Nuoli portaassa osoittaa noususuunnan.</p><label>Aukkovaihtoehto<select id="choice"><option value="">Vertaa A:ta ja B:tä</option><option value="A">A · Suorakaiteinen aukko</option><option value="B">B · Porrastettu aukko</option></select></label><p id="chosen" aria-live="polite"></p><div class="grid" id="compare"></div>
 </details><details id="poikki"><summary>Poikkileikkaus kahdesta suunnasta</summary><p>C–C ja D–D ovat samassa kohdassa. Vastakkaiset katsesuunnat osoittavat, kummalla puolella kapea askelma ja yläsyöksy sijaitsevat.</p><div class="grid" id="cross"></div>
@@ -50,16 +55,30 @@ svg [data-viiva="runkoleikkaus"]{stroke-width:var(--runkoleikkaus)}
 <input type="hidden" name="entry.497987231" id="feedbackPayload"><a id="feedbackAttachment" href="https://docs.google.com/forms/d/e/1FAIpQLSd4msn92tCHcH9Jy_EyBPh6xHZ8fvRgyrN36X5B2xtVgenZsw/viewform" target="_blank" rel="noopener">Lisää kuvakaappaus tai tiedosto</a><small>Rajaa kuvakaappaus piirustukseen. Peitä asiakkaan nimi ja kohteen osoite ennen lähettämistä.</small><small>Liite avataan Google-lomakkeella. Kirjaudu Googleen, valitse tiedosto ja lähetä viesti siellä. Pelkän tekstin voit lähettää tästä ilman kirjautumista.</small><button type="submit">Lähetä tekstipalaute</button></form>
 <div id="feedbackAck" hidden><p>Vastaanottajan kuittaus</p><iframe name="feedbackReceipt" title="Google Formsin vastaus lähetykseen" style="width:100%;height:12rem;border:0"></iframe></div>
 <a href="https://docs.google.com/forms/d/e/1FAIpQLSfdCbaVCbprC9l2OoBw_eStLkESyYojKCtVgdwmDmy-QO8Ihw/viewform" target="_blank" rel="noopener">Avaa palautelomake erikseen</a></details></main>
-<script src="porras-ifc.js?v=millimetri"></script><script src="qrcode.js"></script><script src="arkkitehti.js?v=millimetri"></script><script src="materials.js?v=millimetri"></script><script>
+<script defer src="siirtymat.js?v=20261122-tiimi"></script><script src="porras-ifc.js?v=20261122-tiimi"></script><script src="qrcode.js"></script><script src="arkkitehti.js?v=20261122-tiimi"></script><script src="materials.js?v=20261122-tiimi"></script><script>
 'use strict';
 const el=id=>document.getElementById(id);
 const num=(v,p=0)=>v.toLocaleString('fi-FI',{minimumFractionDigits:p,maximumFractionDigits:p});
-const level=z=>z===0?'±0,000':'+'+(z/1000).toFixed(3).replace('.',',');
+const level=z=>z===0?'±0,000':'+'+(Math.round(z)/1000).toFixed(3).replace('.',',');
 function model(room,floor,going){
  const H=room+floor;let n=Math.ceil(H/380);if(n%2===0)n++;n=Math.max(3,n);
  const rise=H/(2*n),run=(n-1)*going,A=850+run,B=A-going,depth=A+going;
  const overlap=20, treadDepth=going+overlap;
  return {room,floor,H,n,rise,going,overlap,treadDepth,landing:850+going,run,A,B,depth,box:rise-100,head:e=>room-(1+(depth-e)/going)*rise};
+}
+const minHeadroom=1950;
+function headroomOk(m,k){
+ // Compare the rise line to the finished soffit using whole input millimetres.
+ const denominator=2*m.n*m.going;
+ const riseLineNumerator=(m.going+m.depth-m[k])*m.H;
+ return (m.room-minHeadroom)*denominator>=riseLineNumerator;
+}
+function headroomLabel(m,k){
+ const value=m.head(m[k]);
+ return !headroomOk(m,k)&&Math.round(value)===minHeadroom?'alle '+num(minHeadroom):num(value);
+}
+function headroomWarning(m,k){
+ return headroomOk(m,k)?'':'Alittaa asunnon sisäportaan 1 950 mm:n vähimmäiskulkukorkeuden.';
 }
 const stroke={edge:'0.50mm',view:'0.25mm',dim:'0.13mm',ext:'0.13mm',hidden:'0.25mm',cut:'0.25mm'};
 function sheet(w,h,desc){
@@ -125,7 +144,7 @@ function longitudinal(m,right,type){
  block(e,m.H,m.depth+350-e,m.floor,'edge','#edf0ed');ln(m.landing,m.H/2,m.depth,m.rise,'hidden');
  const h=m.head(e),z=m.room-h,px=X(e);
  g.arrow(px,Y((m.room+z)/2),px,Y(m.room));g.arrow(px,Y((m.room+z)/2),px,Y(z));
- g.text(px+(right?-13:14),Y((m.room+z)/2),num(h)+' vapaa',13,-90);
+ g.text(px+(right?-13:14),Y((m.room+z)/2),headroomLabel(m,type)+' vapaa',13,-90);
  g.hd(X(0),X(e),Y(m.H)-20,Y(m.H),Y(m.H),num(e)+' aukko');
  g.hd(X(0),X(m.depth),y+49,y,y,num(m.depth));
  g.hd(X(0),X(850),Y(m.H/2)-34,Y(m.H/2),Y(m.H/2+m.rise),'850');
@@ -180,6 +199,9 @@ function readField(id){const field=el(id);return field.value.trim()===''?NaN:fie
 function layers(id){
  const board=Number(el(id+'Board').value),wood=readField(id+'Wood');
  return Number.isInteger(wood)&&wood>0?{board,wood,total:board+wood}:null;
+}
+function frameLayersFit(m,top,front){
+ return Boolean(top&&front&&top.total<m.rise&&front.total<m.going);
 }
 
 function frameCrossSection(m,top,front){
@@ -241,6 +263,9 @@ function frameCrossSection(m,top,front){
  el('crossFrame').innerHTML=g.end();
  el('crossBasis').textContent='Demon ulkoreunat vastaavat rungon ulkoreunoja. Kapean askelman valmis leveys on 850 mm. Sen vapaalle sivulle on oletettu sama levy ja parketti kuin otsapintaan ('+label(front.board)+' + '+label(front.wood)+' mm). Varmista sivupinnan rakenne ennen valmistusta.';
 }
+function frameSectionWidth(m){
+ return Math.min(150,87000/(182+m.H/2*730/m.depth));
+}
 function drawAssemblySheet(m,top,front){
  const panel=el('assemblySheet'), width=1800,narrow=850-front.total, depth=m.depth-front.total;
  const right=el('hand').value==='right', sign=right?-1:1;
@@ -261,10 +286,11 @@ function drawAssemblySheet(m,top,front){
   for(const d of [-.46,.46])line(X,Y,X-2.5*Math.cos(a+d),Y-2.5*Math.sin(a+d),.35);
  }
  // All views use the same physical scale on the A3 sheet.
- const sectionWidth=Math.min(150,87000/(182+m.H/2*730/m.depth)), scale=730/m.depth*sectionWidth/1000;
+ const sectionWidth=frameSectionWidth(m), scale=730/m.depth*sectionWidth/1000;
  const X=v=>25+(right?width-v:v)*scale,Y=v=>53+v*scale;
  const edge=(a,b,c,d)=>line(X(a),Y(b),X(c),Y(d),.25);
  txt(10,13,'Alaboksin runko',6,'start');txt(409,12,'MITAT mm   ·   A3   ·   LUONNOS',3,'end');
+ txt(136,12,'Kerroskorkeus '+num(m.H)+' · välipohja '+num(m.floor)+' · etenemä '+num(m.going)+' · aukko '+(el('choice').value||'avoin'),3.2,'start');
  line(10,18,410,18,.35);
  out.push('<g data-view="plan">');
  txt(10,29,'Pohjakuva',4.4,'start');txt((X(0)+X(width))/2,51,'Valmis takaseinä');
@@ -327,6 +353,11 @@ function drawAssemblySheet(m,top,front){
  function inset(id,x,y){
   const svg=el(id).querySelector('svg').cloneNode(true);
   const vb=svg.viewBox.baseVal, h=sectionWidth*vb.height/vb.width;
+  const minFontSize=2.5*vb.width/sectionWidth;
+  for(const label of svg.querySelectorAll('text')){
+   const size=Number(label.getAttribute('font-size'));
+   if(size<minFontSize)label.setAttribute('font-size',minFontSize);
+  }
   for(const [k,v] of Object.entries({x,y,width:sectionWidth,height:h}))svg.setAttribute(k,v);
   svg.style.width=sectionWidth+'px';svg.style.height=h+'px';out.push(svg.outerHTML);return y+h;
  }
@@ -339,6 +370,7 @@ function drawAssemblySheet(m,top,front){
  out.push('</g>');
  line(10,277,410,277,.25);
  txt(10,284,'Leikattu reuna 0,50 mm   ·   Näkyvä reuna 0,25 mm   ·   Mittaviiva 0,13 mm',3.2,'start');
+ txt(208,284,'Kapeat askelmat '+(right?'oikealla':'vasemmalla')+' noustessa · päädyt '+sheetEndSelection(),3.2,'start');
  txt(10,291,'Vaakalevy '+num(top.board)+' + parketti '+num(top.wood)+' mm   ·   Otsalevy '+num(front.board)+' + parketti '+num(front.wood)+' mm   ·   Kapean sivun pintakerros oletettu otsan mukaiseksi.',3,'start');
  panel.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 297" role="img" aria-label="Alaboksin rungon pohja, pituusleikkaus ja etukuva samalla arkilla">'+out.join('')+'</svg>';
 }
@@ -349,14 +381,23 @@ el('sheetZoom').addEventListener('click',()=>{
 
 function updateWorkshop(m){
  const top=layers('top'),front=layers('front'),fmt=v=>Number.isFinite(v)?num(v):'—';
+ frameCanBePrinted=frameLayersFit(m,top,front);
+ updateApproval();
 
- updateMaterials(m,top,front);
  const checks=[['siteW',1800,'leveydessä'],['siteD',m.depth,'syvyydessä']].map(([id,nom,label])=>{
   const v=readField(id);if(!Number.isFinite(v))return '';if(!Number.isInteger(v)||v<=0)return 'Anna mitta '+label+' positiivisina kokonaisina millimetreinä.';const delta=v-nom;return (delta<0?'Tilaa puuttuu ':'Varausta jäljellä ')+fmt(Math.abs(delta))+' mm '+label+'.';
  }).filter(Boolean);
  el('siteReport').textContent=(el('measured').checked?'Työmaamitoista laskettu välipohja '+fmt(m.floor)+' mm. ':'Suunnittelumitat käytössä. ')+checks.join(' ');
+ updateMaterials(m,top,front,checks);
  el('frameNote').textContent=(el('measured').checked?'Työmaan korkoihin sovitetut runkopinnat. ':'Suunnittelukorkoihin perustuvat alustavat runkopinnat. ')+(top?'Vaakapinnan vähennys '+fmt(top.total)+' mm. ':'Anna vaakapinnan paksuus kokonaisina millimetreinä. ')+(front?'Otsapinnan vähennys '+fmt(front.total)+' mm.':'Anna otsapinnan paksuus kokonaisina millimetreinä.');
- if(!top||!front){el('assemblySheet').textContent='Tarkista pintakerrokset.';el('crossFrame').textContent='Tarkista pintakerrokset.';el('crossBasis').textContent='';el('frameDrawing').textContent='Anna molempien pintojen levy- ja parkettipaksuudet.';return}
+ if(!frameCanBePrinted){
+  let reason='Anna parketin paksuus molemmille pinnoille positiivisina kokonaisina millimetreinä.';
+  if(top&&front)reason=top.total>=m.rise?'Askelpinnan kerrokset vievät koko ensimmäisen nousun. Tarkista paksuudet.':'Otsapinnan kerrokset vievät koko etenemän. Tarkista paksuudet.';
+  el('frameNote').textContent=reason;
+  el('assemblySheet').textContent=reason;
+  el('narrowSection').replaceChildren();el('crossFrame').replaceChildren();el('crossBasis').replaceChildren();el('frameDrawing').replaceChildren();
+  return;
+ }
  el('narrowSection').innerHTML=longFrameSection(m,top,front,false);
  el('frameDrawing').innerHTML=longFrameSection(m,top,front,true);
  frameCrossSection(m,top,front);drawAssemblySheet(m,top,front);
@@ -364,6 +405,7 @@ function updateWorkshop(m){
 function longFrameSection(m,top,front,wideSide){
  const fmt=v=>num(v);
  const scale=730/m.depth,base=62+m.H/2*scale,width=1000;
+ const stagger=m.going*scale*frameSectionWidth(m)/width<7.4;
  const dir=(el('hand').value==='right')===wideSide?1:-1;
  const X=x=>(dir===1?105:width-105)+dir*x*scale,Y=z=>base-z*scale;
  const g=sheet(width,base+120,'Alaboksin rungon juokseva vaaka- ja korkeusmitoitus');
@@ -399,7 +441,7 @@ function longFrameSection(m,top,front,wideSide){
   g.line(px,bottom-7,px,bottom+6,'ext');
   g.line(side-dir*7,py,side+dir*6,py,'ext');
   tick(px,bottom);tick(side,py);
-  g.text(px,bottom+22,val(x),13);g.text(side+dir*34,py+4,val(z),13);
+  g.text(px,bottom+(stagger&&i%2?-9:22),val(x),13);g.text(side+dir*34,py+4,val(z),13);
   g.text((px+back)/2,py+16,i===m.n?'Kääntötaso':String(i),13);
   if(!wideSide&&i===4){g.hd(back,px,py-13,py-8,py-8,val(m.going));g.vd(px+dir*18,py,Y(previousHeight),px+dir*13,px+dir*13,num(m.rise,1));}
   if(wideSide&&i===3){
@@ -438,7 +480,28 @@ function goingDiagram(going){
  g.text(end+66,69,'Limitys 20 mm',12);
  return g.end();
 }
+const framePrintButton=document.createElement('button');
+framePrintButton.type='button';framePrintButton.id='printFrame';
+framePrintButton.textContent='Tallenna timpurin runkoarkki PDF-tiedostoksi';
+el('sheetZoom').after(framePrintButton);
+const frameHeightNotice=document.createElement('span');
+frameHeightNotice.setAttribute('role','status');
+framePrintButton.after(frameHeightNotice);
+const exportHeightNotice=document.createElement('p');
+exportHeightNotice.setAttribute('role','status');
+el('exportIfc').after(exportHeightNotice);
+function clearFramePrint(){el('framePrintSheet')?.remove();}
+framePrintButton.addEventListener('click',()=>{
+ clearFramePrint();
+ const framePrintSheet=document.createElement('section');
+ framePrintSheet.id='framePrintSheet';
+ framePrintSheet.append(el('assemblySheet').querySelector('svg').cloneNode(true));
+ document.body.append(framePrintSheet);
+ window.print();
+});
+window.addEventListener('afterprint',clearFramePrint);
 el('printSheets').addEventListener('click',()=>{
+ clearFramePrint();
  el('sheet1').open=true;el('sheet2').open=true;window.print();
 });
 el('exportIfc').addEventListener('click',()=>{
@@ -452,15 +515,16 @@ el('exportIfc').addEventListener('click',()=>{
  setTimeout(()=>URL.revokeObjectURL(url),60000);
 });
 function mobileOpenings(m){
- const active=el('choice').value||'A';
+ const selected=el('choice').value,active=selected||'A';
  el('compare').dataset.active=active;
- el('openingFacts').textContent='Etenemä '+m.going+' mm · nousu '+num(m.rise,1)+' mm · askelsyvyys '+m.treadDepth+' mm. Aukko alaboksin kohdalla '+num(m[active])+' mm.';
+ el('openingFacts').textContent=(selected?'':'Esikatselu A. ')+'Etenemä '+m.going+' mm · nousu '+num(m.rise,1)+' mm · askelsyvyys '+m.treadDepth+' mm. Aukko alaboksin kohdalla '+num(m[active])+' mm.';
  for(const b of el('openingButtons').children){
   const k=b.dataset.opening;
   const name=k==='A'?'Suorakaiteinen aukko':'Porrastettu aukko';
-  el('choice').querySelector('[value='+k+']').textContent=k+' · '+name+' · aukko '+num(m[k])+' mm · kulkukorkeus '+num(m.head(m[k]))+' mm';
-  b.setAttribute('aria-pressed',String(k===active));
-  b.querySelector('strong').innerHTML='<span>Aukon pituus alaboksin kohdalla</span><b>'+num(m[k])+' mm</b><span>Vapaa kulkukorkeus aukon reunalla</span><b>'+num(m.head(m[k]))+' mm</b>';
+  const warning=headroomWarning(m,k);
+  el('choice').querySelector('[value='+k+']').textContent=k+' · '+name+' · aukko '+num(m[k])+' mm · kulkukorkeus '+headroomLabel(m,k)+' mm'+(warning?' · alittaa vähimmäiskorkeuden':'');
+  b.setAttribute('aria-pressed',String(k===selected));
+  b.querySelector('strong').innerHTML='<span>Aukon pituus alaboksin kohdalla</span><b>'+num(m[k])+' mm</b><span>Vapaa kulkukorkeus aukon reunalla</span><b>'+headroomLabel(m,k)+' mm</b>'+(warning?'<span>'+warning+'</span>':'');
  }
  el('openingView').replaceChildren(el('compare').children[active==='A'?0:1].cloneNode(true));
 }
@@ -491,10 +555,12 @@ function renderEndPanels(m,right){
  el('end-list').innerHTML=(rows?'<table><thead><tr><th>Osa</th><th>Määrä</th></tr></thead><tbody>'+rows+'</tbody></table>':'<p>Valittuja päätykappaleita 0 kpl.</p>')+
  (pending.length?'<p>Avoinna: '+pending.map(p=>p.name.toLowerCase()+' pääty').join(', ')+'.</p>':'');
 }
-let reviewDimensions='';
+let reviewDimensions='',selectedOpeningFits=true,frameCanBePrinted=false;
 function updateApproval(){
  const blocked=!el('strideReview').hidden && !el('strideAck').checked;
- for(const id of ['printSheets','exportIfc'])el(id).disabled=blocked;
+ el('printSheets').disabled=blocked;
+ el('exportIfc').disabled=blocked||!selectedOpeningFits;
+ el('printFrame').disabled=blocked||!selectedOpeningFits||!frameCanBePrinted;
 }
 el('strideAck').addEventListener('change',updateApproval);
 el('applyGoing').addEventListener('click',()=>{
@@ -514,11 +580,11 @@ function suggestGoing(m){
  if(best!==undefined){
   button.dataset.going=best;
   button.textContent='Valitse '+best+' mm:n etenemä';
-  el('goingAdvice').textContent='Ehdotus: '+best+' mm:n etenemällä askelrytmi on '+num(2*m.rise+best)+' mm. Nousu pysyy samana.';
+  el('goingAdvice').textContent='Ehdotus: '+best+' mm:n etenemällä askelrytmi on '+num(2*m.rise+best)+' mm.';
  }else{
   el('goingAdvice').textContent='Näillä korkeuksilla mikään valittavista etenemistä ei tuo askelrytmiä välille 620–640 mm.';
  }
- el('keepGoing').textContent='Pidä '+m.going+' mm:n etenemä kuittaamalla poikkeama.';
+ el('keepGoing').textContent='Pidän '+m.going+' mm:n etenemän ja hyväksyn poikkeaman askelrytmin suosituksesta.';
 }
 function render(){
  el('shareStatus').textContent='';el('manualShare').hidden=true;
@@ -551,13 +617,18 @@ function render(){
  el('error').textContent=issues.join(' ');
  updateShareQr();
  el('goingDiagram').innerHTML=goingDiagram(Number(el('going').value));
- if(issues.length){reviewDimensions='';el('strideAck').checked=false;return}
+ if(issues.length){
+  reviewDimensions='';el('strideAck').checked=false;frameCanBePrinted=false;
+  for(const id of ['printSheets','printFrame','exportIfc','exportSupply'])el(id).disabled=true;
+  el('exportSupply').onclick=null;
+  return;
+ }
  const going=Number(el('going').value);
- const m=model(room,floor,going);drawArchitectSheets(m,right);renderEndPanels(m,right);
+ const m=model(room,floor,going);drawArchitectSheets(m,right,el('choice').value);renderEndPanels(m,right);
  el('metrics').innerHTML='<div>Tilavaraus, leveys × syvyys<b>1 800 × '+num(m.depth)+' mm</b></div><div>Kerroskorkeus<b>'+num(m.H)+' mm</b></div><div>Etenemä<b>'+m.going+' mm</b></div><div>Yksi nousu<b>'+num(m.rise,1)+' mm</b></div>';
  el('lower').innerHTML=plan(m,right,'ala');
  el('dims').innerHTML='<h3>Alaboksi ja kääntötaso</h3><p>Kapeat askelmat '+(right?'oikealla':'vasemmalla')+' alhaalta noustaessa. Kääntötaso on puolessa kerroskorkeudessa.</p><p><b>Leveys</b> 850 + 100 + 850 = 1 800 mm. Keskimmäinen 100 mm on kaidevara.</p><p><b>Tasannesyvyys</b> yläsyöksyn valmiista lähtöreunasta takaseinään 850 mm, alaboksin kohdalla '+num(m.landing)+' mm.</p><p><b>Alaboksin siirto</b> '+m.going+' mm. Syöksyn vaakapituus '+num(m.run)+' mm. Leveiden askelmien väli kulkusuunnassa '+num(2*m.going)+' mm, kapean askelman etenemä '+m.going+' mm.</p><small>Yhtenäinen nuoli osoittaa nousun, katkoviiva yläpuolisen askelman ja pistekatkoviiva leikkaustason. C ja D katsovat vastakkaisiin suuntiin.</small>';
- el('compare').innerHTML=['A','B'].map(k=>'<article><h3>'+k+' · '+(k==='A'?'Suorakaiteinen aukko':'Porrastettu aukko')+'</h3>'+plan(m,right,k)+'<h3>Pituusleikkaus L–L</h3>'+longitudinal(m,right,k)+'<p>Vapaa korkeus aukon reunassa <b>'+num(m.head(m[k]))+' mm</b>.</p></article>').join('');
+ el('compare').innerHTML=['A','B'].map(k=>'<article><h3>'+k+' · '+(k==='A'?'Suorakaiteinen aukko':'Porrastettu aukko')+'</h3>'+plan(m,right,k)+'<h3>Pituusleikkaus L–L</h3>'+longitudinal(m,right,k)+'<p>Vapaa korkeus aukon reunassa <b>'+headroomLabel(m,k)+' mm</b>. '+headroomWarning(m,k)+'</p></article>').join('');
  el('cross').innerHTML=[false,true].map(rev=>'<article><h3>'+(rev?'D–D · takaseinästä alapäähän':'C–C · alapäästä takaseinään')+'</h3><p>Leikkaus '+num(m.depth-350)+' mm takaseinästä.</p>'+['A','B'].map(k=>'<b>Vaihtoehto '+k+'</b>'+transverse(m,right,rev,k)).join('')+'</article>').join('');
  el('detail').innerHTML=detail(m);el('levels').innerHTML='<h3>Tasokorot ja yläsyöksy</h3><p>Alakerran lattia ±0,000<br>Kääntötaso '+level(m.H/2)+'<br>Alakerran valmis katto '+level(room)+'<br>Yläkerran valmis lattia '+level(m.H)+'</p><p>Yläsyöksyssä on '+(m.n-1)+' koteloaskelmaa ja viimeinen nousu lattialle. Askelman syvyys on '+m.treadDepth+' mm, etenemä '+m.going+' mm ja vapaa pystyrako 100 mm. Kotelon paksuus tällä nousulla on '+num(m.box)+' mm.</p>';
  let heights=new Set(Array.from({length:11},(_,i)=>2500+i*50));heights.add(room);
@@ -568,10 +639,18 @@ function render(){
  reviewDimensions=dimensions;
  el('strideReview').hidden=stride>=620 && stride<=640;
  if(!el('strideReview').hidden)suggestGoing(m);
+ const selected=el('choice').value;
+ selectedOpeningFits=!selected||headroomOk(m,selected);
+ const heightNotice=selectedOpeningFits?'':selected+'-aukon kulkukorkeus '+headroomLabel(m,selected)+' mm alittaa vähimmäisvaatimuksen. Valitse toinen aukko tai muuta lähtömittoja.';
+ exportHeightNotice.textContent=heightNotice?heightNotice+' Vertailuarkit voi tallentaa PDF-muodossa.':'';
+ frameHeightNotice.textContent=heightNotice;
  updateApproval();
- el('stride').innerHTML='<b>Askelrytmi · 2 × nousu + etenemä</b><br>2 × '+num(m.rise,1)+' + '+m.going+' ≈ '+num(stride)+' mm. '+(stride>=620&&stride<=640?'Ohjeen vertailuvälillä.':'Ohjeen vertailuvälin ulkopuolella.')+' Tavoite 630 mm · ohjeellinen vertailuväli 620–640 mm. Asuinhuoneiston sisäportaassa nousun enimmäismitta on 190 mm. <a href="https://admin.espoo.fi/sites/default/files/2021-10/Espoon%20esteett%C3%B6m%C3%A4n%20rakentamisen%20ohje_0.pdf">Espoon ohje</a> · <a href="https://www.finlex.fi/fi/lainsaadanto/2017/1007">Asetus 1007/2017, 4 §</a>.';
+ let rhythmResult='≈ '+num(stride)+' mm';
+ if(stride<620 && Math.round(stride)===620)rhythmResult='→ alle 620 mm';
+ if(stride>640 && Math.round(stride)===640)rhythmResult='→ yli 640 mm';
+ el('stride').innerHTML='<b>Askelrytmi · 2 × nousu + etenemä</b><br>2 × '+num(m.rise,1)+' + '+m.going+' '+rhythmResult+'. '+(stride>=620&&stride<=640?'Ohjeen vertailuvälillä.':'Ohjeen vertailuvälin ulkopuolella.')+' Tavoite 630 mm · ohjeellinen vertailuväli 620–640 mm.';
  updateWorkshop(m);yhtenaistaViivat();markChoice();mobileOpenings(m);
- el('rows').innerHTML=Array.from(heights).sort((a,b)=>a-b).map(v=>{let q=model(v,floor,going);return '<tr aria-current="'+(v===room)+'"><td><button type="button" class="pick" '+(site?'disabled ':'')+'data-height="'+q.H+'">'+num(q.H)+'</button></td>'+[num(v),q.n+' + '+q.n,'1 800 × '+num(q.depth),num(q.A),num(q.A),num(q.B),num(q.head(q.A)),num(q.head(q.B))].map(s=>'<td>'+s+'</td>').join('')+'</tr>'}).join('');
+ el('rows').innerHTML=Array.from(heights).sort((a,b)=>a-b).map(v=>{let q=model(v,floor,going);return '<tr aria-current="'+(v===room)+'"><td><button type="button" class="pick" '+(site?'disabled ':'')+'data-height="'+q.H+'">'+num(q.H)+'</button></td>'+[num(v),q.n+' + '+q.n,'1 800 × '+num(q.depth),num(q.A),num(q.A),num(q.B),...['A','B'].map(k=>headroomLabel(q,k)+(headroomOk(q,k)?'':' · alitus'))].map(s=>'<td>'+s+'</td>').join('')+'</tr>'}).join('');
 }
 el('openChoices').addEventListener('click',()=>el('choiceDialog').showModal());
 el('choiceDialog').querySelector('.dismiss').addEventListener('click',()=>el('choiceDialog').close());
@@ -579,15 +658,23 @@ el('choice').addEventListener('change',render);
 for(const id of [...siteInputs,'measured','topBoard','topWood','frontBoard','frontWood']){el(id).addEventListener('input',render);el(id).addEventListener('change',render)}
 el('inputs').addEventListener('input',render);el('inputs').addEventListener('change',render);
 el('rows').addEventListener('click',e=>{let b=e.target.closest('button[data-height]');if(b){el('storey').value=b.dataset.height;render();el('choiceDialog').close();el('sheet1').open=el('sheet2').open=true;el('sheet1').scrollIntoView()}});
+initStockControls();
 const shareFields={
  etenema:'going',kerroskorkeus:'storey',valipohja:'floor',katisyys:'hand',vasen:'end-left',oikea:'end-right',
  aukko:'choice',kerros:'siteH',vapaaKorkeus:'siteRoom',leveys:'siteW',syvyys:'siteD',
- tyomaakorot:'measured',kansilevy:'topBoard',kansiparketti:'topWood',otsalevy:'frontBoard',otsaparketti:'frontWood'
+ tyomaakorot:'measured',kansilevy:'topBoard',kansiparketti:'topWood',otsalevy:'frontBoard',otsaparketti:'frontWood',
+ levypituus:'stockLength',levyleveys:'stockWidth',hukka:'stockWaste'
 };
+// A missing key in an old link keeps the default. An explicit empty key stays unfinished.
+const unfinishedWorkFields=new Set(['topWood','frontWood','stockLength','stockWidth','stockWaste']);
 const incoming=new URLSearchParams(location.search);
 for(const [key,id] of Object.entries(shareFields)){
  if(!incoming.has(key))continue;
  const field=el(id), value=incoming.get(key);
+ if(value===''&&unfinishedWorkFields.has(id)){
+  field.value='';
+  continue;
+ }
  if(id==='going' && /^(25[0-9]|26[0-9])$/.test(value) && Number(value)%5!==0){
   field.add(new Option(value+' mm (aiempi jakolinkki)',value));
  }
@@ -613,8 +700,13 @@ for(const button of document.querySelectorAll('.helpDot')){
 }
 function selectedUrl(){
  const url=new URL(location.pathname,location.origin);
+ if(["#arkit","#runkoarkki","#buy","#supply"].includes(location.hash))url.hash=location.hash;
  for(const [key,id] of Object.entries(shareFields)){
   const field=el(id);
+  if(field.value===''&&unfinishedWorkFields.has(id)&&!field.validity.badInput){
+   url.searchParams.set(key,'');
+   continue;
+  }
   if(!field.validity.valid)return '';
   if(field.type==='checkbox'){if(field.checked)url.searchParams.set(key,'1');}
   else if(field.value!=='')url.searchParams.set(key,field.value);

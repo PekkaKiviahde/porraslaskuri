@@ -1,4 +1,6 @@
 /* Match the drawing origin to the physical A3 sheet when printing. */
+#framePrintSheet {display:none}
+.sheettools {display:flex; flex-wrap:wrap; gap:.5rem}
 @media print {
   main {
     width: 420mm;
@@ -6,4 +8,15 @@
     margin: 0;
     padding: 0;
   }
+  body:has(#framePrintSheet) > :not(#framePrintSheet) {display:none !important}
+  #framePrintSheet {
+    display:block;
+    width:420mm;
+    margin:0;
+    padding:0;
+    border:0;
+  }
+  #framePrintSheet, #framePrintSheet * {visibility:visible}
+  #framePrintSheet > svg {display:block; width:420mm; height:297mm}
+  #framePrintSheet svg svg {width:revert; height:revert}
 }

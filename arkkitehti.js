@@ -1,4 +1,8 @@
 'use strict';
+function sheetEndSelection(){
+ const labels={yes:'kyllä',no:'ei',open:'avoin'};
+ return endPanels().map(p=>p.name.toLowerCase()+' '+labels[p.state]).join(' / ');
+}
 function architectStations(m){
  const lower=Array.from({length:m.n},(_,i)=>m.depth-(m.n-1-i)*m.going);
  const upper=Array.from({length:m.n-1},(_,i)=>850+i*m.going);
@@ -6,9 +10,11 @@ function architectStations(m){
  const stations=(...lists)=>[...new Set([0,...lists.flat()])].sort((a,b)=>a-b);
  return {lower:stations(lower,upper),upper:stations(upper,[m.A]),levels};
 }
-function drawArchitectSheets(m,right){
+function drawArchitectSheets(m,right,selectedOpening){
  const n=m.n,r=m.rise,D=m.depth,W=1800,H=m.H;
- const scale=Math.min(1/30,102/H,112/D);
+ // Both comparison plans share the same A3 row. Leave space for their bottom
+ // cumulative dimensions before the L–L headings, including the 11 + 11 run.
+ const scale=Math.min(1/30,102/H,112/D,90/m.A);
  const f=v=>num(v);
  let parts=[];
  function line(x,y,X,Y,w=.25,dash=''){
@@ -31,24 +37,31 @@ function drawArchitectSheets(m,right){
   for(const d of [-.45,.45])line(X,Y,X-2.1*Math.cos(a+d),Y-2.1*Math.sin(a+d),.28);
  }
  function run(values,position,axis,vertical){
+  const stagger=!vertical&&values.some((v,i)=>i>0&&Math.abs(position(v)-position(values[i-1]))<7.4);
+  if(stagger)axis+=2;
   const P=v=>vertical?[axis,position(v)]:[position(v),axis];
   line(...P(0),...P(values.at(-1)),.13);
-  for(const v of values){
+  for(const [i,v] of values.entries()){
    const [x,y]=P(v);
    if(vertical)line(x-1,y,x+1,y,.13);else line(x,y-1,x,y+1,.13);
    if(v===0)parts.push('<circle cx="'+x+'" cy="'+y+'" r=".65" fill="white" stroke="#142629" stroke-width=".13"/>');
    else tick(x,y);
-   if(vertical)text(x+2,y+1,f(v),2.6,'start');else text(x,y+3.6,f(v),2.6);
+   if(vertical)text(x+2,y+1,f(v),2.6,'start');else text(x,y+(stagger&&i%2?-1.75:3.6),f(v),2.6);
   }
  }
  const stations=architectStations(m);
  function header(title,page){
   parts=[];text(9,11,title,5.4,'start');text(411,10,'ARK  ·  '+page+'/2  ·  A3  ·  LUONNOS',3,'end');
+  const openings={A:'A · Suorakaiteinen aukko',B:'B · Porrastettu aukko'};
+  text(255,10,selectedOpening?'Valittu '+openings[selectedOpening]:'Aukkovalinta avoin',3.2,'start');
   line(9,15,411,15,.35);
  }
  function finish(id,caption){
   line(9,279,411,279,.25);text(9,285,caption,3,'start');
-  text(9,292,'Valmiit pinnat · mitat mm · alakerran valmis lattia ±0,000 · kapeat askelmat '+(right?'oikealla':'vasemmalla')+' noustessa',3,'start');
+  if(selectedOpening&&!headroomOk(m,selectedOpening)){
+   text(411,285,'Aukko '+selectedOpening+' alittaa 1 950 mm:n vähimmäiskulkukorkeuden',3.2,'end');
+  }
+  text(9,292,'Mitat mm · alakerran valmis lattia ±0,000 · välipohja '+f(m.floor)+' · etenemä '+f(m.going)+' · kapeat askelmat '+(right?'oikealla':'vasemmalla')+' noustessa · päädyt '+sheetEndSelection(),3,'start');
   document.getElementById(id).innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 297" role="img" aria-label="'+caption+'">'+parts.join('')+'</svg>';
  }
  const Xp=(left,v)=>left+(right?W-v:v)*scale;
@@ -108,14 +121,15 @@ function drawArchitectSheets(m,right){
    const a=850+(i-1)*m.going,z=(n+i)*r,w=upperCut?.7:.25;
    seg(a,z,a+m.treadDepth,z,w);seg(a+m.treadDepth,z,a+m.treadDepth,z-m.box,w);seg(a+m.treadDepth,z-m.box,a,z-m.box,w);seg(a,z-m.box,a,z,w);
   }
-  const e=opening?m[opening]:m.A;
+  // The stepped edge shortens only the lower flight's narrow-tread lane.
+  const e=wide?m.A:m[opening||selectedOpening||'A'];
   seg(e,H,D+m.treadDepth,H,.7);seg(e,m.room,D+m.treadDepth,m.room,.7);seg(e,H,e,m.room,.7);
   text(x(340),y(H/2)-1.8,level(H/2),2.7);
   text(x(D+160),y(H)-1.5,level(H),2.7);
   if(opening){
    seg(m.landing,H/2,D,r,.13,'2 1');
    const head=m.head(e),z=m.room-head;
-   dimV(y(z),y(m.room),x(e),f(Math.round(head)));
+   dimV(y(z),y(m.room),x(e),headroomLabel(m,opening));
    dimH(x(0),x(e),y(H)-5,f(e));
    text(x(e)+dir*4,(y(z)+y(m.room))/2,'vapaa',2.7,'middle',-90);
   }else{
@@ -160,8 +174,9 @@ function drawArchitectSheets(m,right){
   text(off+12,25,k+(k==='A'?' · Suorakaiteinen aukko':' · Porrastettu aukko'),4.5,'start');
   plan(off+47,38,k);
   text(off+12,146,'L–L · vapaa korkeus aukon reunalla',4,'start');
-  profile(off+43,261,false,k);
-  text(off+12,273,'Vapaa kulkukorkeus '+f(Math.round(m.head(m[k])))+' mm',3.8,'start');
+  profile(off+43,259,false,k);
+  const minimumNote=headroomOk(m,k)?'':' · alittaa 1 950 mm:n vähimmäiskorkeuden';
+  text(off+12,273,'Vapaa kulkukorkeus '+headroomLabel(m,k)+' mm'+minimumNote,3.6,'start');
  }
  finish('ark2','Kulkukorkeus mitataan pystysuoraan etureunojen yhdysviivasta välipohjan alapintaan. A:n ja B:n ero '+f(Math.round(m.head(m.A)-m.head(m.B)))+' mm.');
 }
