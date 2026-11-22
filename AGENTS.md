@@ -3,7 +3,7 @@
 ## Työnjako aliagenteille
 
 - Käytä aliagentteja, kun käyttäjä tai soveltuva työohje pyytää rinnakkaista työtä ja istunto tukee sitä. Jaa työ itsenäisiin osiin, kuten laskurin muutos, laskennan riippumaton tarkistus tai selaintesti.
-- Nimeä jokaiselle tehtävä, tiedostot tai alue, odotettu tulos ja tarvittava testi. Sovi yksi kirjoittaja kutakin tiedostoa tai elävää tilausriviä kohti. Anna tarkistajalle lukuoikeudellinen tehtävä ja lähtöarvot.
+- Nimeä jokaiselle tehtävä, tiedostot tai alue, odotettu tulos ja tarvittava testi. Sovi yksi kirjoittaja kutakin tiedostoa tai elävää tilausriviä kohti. Anna tarkistajalle lähtöarvot ja pyydä tarkistus ilman tiedostomuutoksia.
 - Pääagentti vertaa havaintoja, selvittää ristiriidat, kokoaa muutokset ja tarkistaa lopputuloksen ennen käyttäjälle raportointia. Kirjaa toteutuneet testit ja avoimet kohdat PR:ään tai soveltuvaan GitHub-tehtävään.
 
 ## Skillit
