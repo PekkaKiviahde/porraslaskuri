@@ -12,15 +12,17 @@ svg [data-viiva]{vector-effect:non-scaling-stroke;stroke:#233537;stroke-linecap:
 svg [data-viiva="reuna"]{stroke-width:var(--reuna)}
 svg [data-viiva="mitta"]{stroke-width:var(--mitta)}
 svg [data-viiva="runkoleikkaus"]{stroke-width:var(--runkoleikkaus)}
-#choiceDialog{max-width:min(96vw,1100px);max-height:85vh;padding:22px;border:1px solid #82958f;border-radius:6px}#choiceDialog h2{margin-top:0}#choiceDialog::backdrop{background:#17282a70}.dismiss{float:right}#openChoices{padding:9px 15px;margin:16px 0}@media print{#arkit details{display:block;margin:0;padding:0;border:0;break-after:page}#arkit summary{display:none}#arkit details::details-content{display:contents;content-visibility:visible}} .shareControls{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin:1rem 0}.shareControls #shareQr svg{display:block;min-width:0;width:220px;max-width:100%;height:auto;shape-rendering:crispEdges}@media print{.shareControls{display:none}}</style><main><header><h1>Portaikon tilavaraus</h1><p>Asunnon sisäinen paluuporras · Arkkitehdin luonnos</p></header>
-<form id="inputs" onsubmit="return false"><label>Huonekorkeus (mm)<input required type="number" min="2500" max="3000" step="1" id="room" value="2700"></label><label>Välipohjan kokonaispaksuus (mm)<input required type="number" min="1" max="3000" step="1" id="floor" value="550"></label><label>Kapeat askelmat noustessa<select id="hand"><option value="left">Vasemmalla</option><option value="right" selected>Oikealla</option></select></label><fieldset style='grid-column:1/-1;min-width:0'><legend>Alimman boksin päädyt</legend><p>Katso portaita alhaalta ylöspäin.</p><div class='fields'><label>Vasemmalle päätykappale?<select id='end-left'><option value='open'>Avoin</option><option value='yes'>Kyllä</option><option value='no'>Ei</option></select></label><label>Oikealle päätykappale?<select id='end-right'><option value='open'>Avoin</option><option value='yes'>Kyllä</option><option value='no'>Ei</option></select></label></div></fieldset></form><div class="shareControls"><div id="shareQr"></div><div><p>Skannaa puhelimen kameralla tai kopioi linkki.</p><button type="button" id="copyShare">Kopioi linkki näillä valinnoilla</button> <span id="shareStatus" role="status"></span></div></div><label id="manualShare" hidden>Jaettava linkki<input id="shareUrl" readonly type="url"></label><details id="sitebox"><summary>Työmaan tarkemitat</summary><p>Mittaa korkeudet samasta alakerran valmiin lattian lähtötasosta ±0,000. Keskeneräisessä kohteessa siirrä suunnitellut valmiit pinnat korkomerkein. Mittaa tila useasta kohdasta ja syötä pienin vapaa leveys ja syvyys.</p><div class="fields">
+#choiceDialog{max-width:min(96vw,1100px);max-height:85vh;padding:22px;border:1px solid #82958f;border-radius:6px}#choiceDialog h2{margin-top:0}#choiceDialog::backdrop{background:#17282a70}.dismiss{float:right}#openChoices{padding:9px 15px;margin:16px 0}@media print{#arkit details{display:block;margin:0;padding:0;border:0;break-after:page}#arkit summary{display:none}#arkit details::details-content{display:contents;content-visibility:visible}} .shareControls{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin:1rem 0}.shareControls #shareQr svg{display:block;min-width:0;width:220px;max-width:100%;height:auto;shape-rendering:crispEdges}@media print{.shareControls{display:none}}.measureTitle{display:flex;align-items:center;gap:.4rem}.helpDot{display:inline-grid;place-items:center;border-radius:50%;padding:0;min-width:1.8rem;height:1.8rem;border:1px solid currentColor;background:white;color:#245750;font:bold 1rem Georgia,serif}.measureTitle+p{font-size:.91rem;margin:.4rem 0}#clearRoom{display:block;font-size:1.35rem;font-weight:bold;padding:.45em 0}</style><main><header><h1>Portaikon tilavaraus</h1><p>Asunnon sisäinen paluuporras · Arkkitehdin luonnos</p></header>
+<form id="inputs" onsubmit="return false"><div><div class="measureTitle"><label for="storey">Kerroskorkeus (mm)</label><button class="helpDot" type="button" aria-label="Kerroskorkeuden mittauspinnat" aria-expanded="false" aria-controls="infoStorey">i</button></div><p hidden id="infoStorey">Mittaa alakerran valmiin lattian yläpinnasta yläkerran valmiin lattian yläpintaan.</p><input required type="number" min="1" step="1" id="storey" value="3250"></div>
+<div><div class="measureTitle"><label for="floor">Välipohjan kokonaispaksuus (mm)</label><button class="helpDot" type="button" aria-label="Välipohjan mittauspinnat" aria-expanded="false" aria-controls="infoFloor">i</button></div><p hidden id="infoFloor">Mittaa alakerran valmiista kattopinnasta yläkerran valmiin lattian yläpintaan. Mukaan kuuluvat myös katon ja lattian pintakerrokset.</p><input required type="number" min="1" max="3000" step="1" id="floor" value="550"></div>
+<div><div class="measureTitle"><label for="clearRoom">Vapaa huonekorkeus</label><button class="helpDot" type="button" aria-label="Vapaan huonekorkeuden mittauspinnat" aria-expanded="false" aria-controls="infoRoom">i</button></div><p hidden id="infoRoom">Alakerran valmiin lattian yläpinnasta valmiin katon alapintaan. Laskuri vähentää kerroskorkeudesta välipohjan kokonaispaksuuden.</p><output id="clearRoom" for="storey floor" aria-live="polite"></output></div><label>Kapeat askelmat noustessa<select id="hand"><option value="left">Vasemmalla</option><option value="right" selected>Oikealla</option></select></label><fieldset style='grid-column:1/-1;min-width:0'><legend>Alimman boksin päädyt</legend><p>Katso portaita alhaalta ylöspäin.</p><div class='fields'><label>Vasemmalle päätykappale?<select id='end-left'><option value='open'>Avoin</option><option value='yes'>Kyllä</option><option value='no'>Ei</option></select></label><label>Oikealle päätykappale?<select id='end-right'><option value='open'>Avoin</option><option value='yes'>Kyllä</option><option value='no'>Ei</option></select></label></div></fieldset></form><div class="shareControls"><div id="shareQr"></div><div><p>Skannaa puhelimen kameralla tai kopioi linkki.</p><button type="button" id="copyShare">Kopioi linkki näillä valinnoilla</button> <span id="shareStatus" role="status"></span></div></div><label id="manualShare" hidden>Jaettava linkki<input id="shareUrl" readonly type="url"></label><details id="sitebox"><summary>Työmaan tarkemitat</summary><p>Mittaa korkeudet samasta alakerran valmiin lattian lähtötasosta ±0,000. Keskeneräisessä kohteessa siirrä suunnitellut valmiit pinnat korkomerkein. Mittaa tila useasta kohdasta ja syötä pienin vapaa leveys ja syvyys.</p><div class="fields">
 <label>Valmiista lattiasta valmiiseen lattiaan (mm)<input id="siteH" type="number" step="any" min="1"></label>
 <label>Alalattiasta valmiiseen kattoon (mm)<input id="siteRoom" type="number" step="any" min="1"></label>
 <label>Vapaa leveys sivupintojen välissä (mm)<input id="siteW" type="number" step="any" min="1"></label>
 <label>Vapaa syvyys takaseinästä alapään tilarajaan (mm)<input id="siteD" type="number" step="any" min="1"></label></div>
 <label class="check"><input type="checkbox" id="measured"> Käytä työmaan korkoja kaikissa piirustuksissa ja runkotaulukossa</label><p id="siteReport" role="status"></p></details>
 <p id="error" class="err" role="status"></p><div id="results"><article id="end-preview"><h3>Alimman boksin päätykappaleet</h3><div id="end-front"></div><h4>Osaluettelo · päätykappaleet</h4><div id="end-list" aria-live="polite"></div></article><div class="metrics" id="metrics" aria-live="polite"></div>
-<button type="button" id="openChoices" aria-haspopup="dialog">Avaa arkkitehdin valintataulukko</button><dialog id="choiceDialog" aria-labelledby="choiceHeading"><button type="button" class="dismiss" autofocus>Sulje</button><h2 id="choiceHeading">Arkkitehdin valintataulukko</h2><p>Kaikki mitat millimetreinä. Valitse huonekorkeus riviltä päivittääksesi piirustukset. Aukkopituudet mitataan valmiista takaseinästä.</p><div class="scroll"><table><thead><tr><th>Huone­korkeus</th><th>Kerros­korkeus</th><th>Nousut</th><th>Tila L × S</th><th>Yläsyöksyn aukko A/B</th><th>Alaboksin aukko A</th><th>Alaboksin aukko B</th><th>Vapaa korkeus A</th><th>Vapaa korkeus B</th></tr></thead><tbody id="rows"></tbody></table></div></dialog><section id="arkit"><details open id="sheet1"><summary>Arkki 1 · Portaikon valmiit mitat</summary><article id="ark1"></article></details><details open id="sheet2"><summary>Arkki 2 · A- ja B-aukkojen vertailu</summary><article id="ark2"></article></details></section><details id="alakerta"><summary>Alakerran pohja</summary><div class="grid"><figure id="lower"></figure><article id="dims"></article></div>
+<button type="button" id="openChoices" aria-haspopup="dialog">Avaa arkkitehdin valintataulukko</button><dialog id="choiceDialog" aria-labelledby="choiceHeading"><button type="button" class="dismiss" autofocus>Sulje</button><h2 id="choiceHeading">Arkkitehdin valintataulukko</h2><p>Kaikki mitat millimetreinä. Valitse kerroskorkeus riviltä päivittääksesi piirustukset. Aukkopituudet mitataan valmiista takaseinästä.</p><div class="scroll"><table><thead><tr><th>Kerroskorkeus</th><th>Vapaa huonekorkeus</th><th>Nousut</th><th>Tila L × S</th><th>Yläsyöksyn aukko A/B</th><th>Alaboksin aukko A</th><th>Alaboksin aukko B</th><th>Vapaa korkeus A</th><th>Vapaa korkeus B</th></tr></thead><tbody id="rows"></tbody></table></div></dialog><section id="arkit"><details open id="sheet1"><summary>Arkki 1 · Portaikon valmiit mitat</summary><article id="ark1"></article></details><details open id="sheet2"><summary>Arkki 2 · A- ja B-aukkojen vertailu</summary><article id="ark2"></article></details></section><details id="alakerta"><summary>Alakerran pohja</summary><div class="grid"><figure id="lower"></figure><article id="dims"></article></div>
 </details><details id="pituudet"><summary>Yläkerran aukko ja pituusleikkaus L–L</summary><p>A ja B on kohdistettu samaan valmiiseen takaseinään. Nuoli portaassa osoittaa noususuunnan.</p><label>Aukkovaihtoehto<select id="choice"><option value="">Vertaa A:ta ja B:tä</option><option value="A">A · Suorakaiteinen aukko</option><option value="B">B · Porrastettu aukko</option></select></label><p id="chosen" aria-live="polite"></p><div class="grid" id="compare"></div>
 </details><details id="poikki"><summary>Poikkileikkaus kahdesta suunnasta</summary><p>C–C ja D–D ovat samassa kohdassa. Vastakkaiset katsesuunnat osoittavat, kummalla puolella kapea askelma ja yläsyöksy sijaitsevat.</p><div class="grid" id="cross"></div>
 </details><details><summary>Yläaskelman sivudetalji</summary><div class="grid"><figure id="detail"></figure><article id="levels"></article></div></details>
@@ -424,8 +426,12 @@ function renderEndPanels(m,right){
 }
 function render(){
  el('shareStatus').textContent='';el('manualShare').hidden=true;
- const site=el('measured').checked,room=site?readField('siteRoom'):el('room').valueAsNumber,floor=site?readField('siteH')-room:el('floor').valueAsNumber,right=el('hand').value==='right';
- el('room').disabled=site;el('floor').disabled=site;el('siteReport').textContent='';
+ const site=el('measured').checked, right=el('hand').value==='right';
+ const total=readField(site?'siteH':'storey');
+ const floor=site?total-readField('siteRoom'):readField('floor');
+ const room=site?readField('siteRoom'):total-floor;
+ el('clearRoom').textContent=Number.isFinite(room)&&room>0?num(room,Number.isInteger(room)?0:1)+' mm':'—';
+ el('storey').disabled=site;el('floor').disabled=site;el('siteReport').textContent='';
  const issues=[];
  function checkHeight(id,label,min,max){
   const field=el(id),v=field.valueAsNumber;
@@ -436,7 +442,11 @@ function render(){
   field.setAttribute('aria-invalid',String(Boolean(message)));
   if(message)issues.push(message);
  }
- checkHeight(site?'siteRoom':'room',site?'Työmaalla mitattu huonekorkeus':'Huonekorkeus',2500,3000);
+ if(site)checkHeight('siteRoom','Työmaalla mitattu huonekorkeus',2500,3000);
+ else {
+  if(!Number.isFinite(total)||!el('storey').validity.valid)issues.push('Anna kerroskorkeus positiivisina kokonaisina millimetreinä.');
+  if(Number.isFinite(room)&&(room<2500||room>3000))issues.push('Laskettu vapaa huonekorkeus on '+num(room)+' mm. Tämän laskurin suunnittelualue on 2 500–3 000 mm.');
+ }
  if(!site)checkHeight('floor','Välipohjan paksuus',1,3000);
  else if(!Number.isFinite(readField('siteH')))issues.push('Työmaan mitta valmiista lattiasta valmiiseen lattiaan puuttuu.');
  else if(Number.isFinite(room)&&(floor<=0||floor>3000))issues.push('Työmaakorkojen erotus on '+num(floor,1)+' mm. Tarkista lattioiden välinen korkeus ja huonekorkeus.');
@@ -456,16 +466,16 @@ function render(){
  const stride=2*m.rise+250;
  el('stride').innerHTML='<b>Askelrytmi</b> · 2 × '+num(m.rise,1)+' + 250 ≈ '+num(stride,1)+' mm. '+(stride>=620&&stride<=640?'Ohjeen vertailuvälillä.':'Ohjeen vertailuvälin ulkopuolella.')+' Sisäportaan vertailuarvo on 630 ± 10 mm. Asuinhuoneiston sisäportaassa nousun enimmäismitta on 190 mm. <a href="https://admin.espoo.fi/sites/default/files/2021-10/Espoon%20esteett%C3%B6m%C3%A4n%20rakentamisen%20ohje_0.pdf">Espoon ohje</a> · <a href="https://www.finlex.fi/fi/lainsaadanto/2017/1007">Asetus 1007/2017, 4 §</a>.';
  updateWorkshop(m);yhtenaistaViivat();markChoice();
- el('rows').innerHTML=Array.from(heights).sort((a,b)=>a-b).map(v=>{let q=model(v,floor);return '<tr aria-current="'+(v===room)+'"><td><button type="button" class="pick" '+(site?'disabled ':'')+'data-height="'+v+'">'+num(v)+'</button></td>'+[num(q.H),q.n+' + '+q.n,'1 800 × '+num(q.depth),num(q.A),num(q.A),num(q.B),num(q.head(q.A)),num(q.head(q.B))].map(s=>'<td>'+s+'</td>').join('')+'</tr>'}).join('');
+ el('rows').innerHTML=Array.from(heights).sort((a,b)=>a-b).map(v=>{let q=model(v,floor);return '<tr aria-current="'+(v===room)+'"><td><button type="button" class="pick" '+(site?'disabled ':'')+'data-height="'+q.H+'">'+num(q.H)+'</button></td>'+[num(v),q.n+' + '+q.n,'1 800 × '+num(q.depth),num(q.A),num(q.A),num(q.B),num(q.head(q.A)),num(q.head(q.B))].map(s=>'<td>'+s+'</td>').join('')+'</tr>'}).join('');
 }
 el('openChoices').addEventListener('click',()=>el('choiceDialog').showModal());
 el('choiceDialog').querySelector('.dismiss').addEventListener('click',()=>el('choiceDialog').close());
 el('choice').addEventListener('change',render);
 for(const id of [...siteInputs,'measured','topBoard','topWood','frontBoard','frontWood']){el(id).addEventListener('input',render);el(id).addEventListener('change',render)}
 el('inputs').addEventListener('input',render);el('inputs').addEventListener('change',render);
-el('rows').addEventListener('click',e=>{let b=e.target.closest('button[data-height]');if(b){el('room').value=b.dataset.height;render();el('choiceDialog').close();el('sheet1').open=el('sheet2').open=true;el('sheet1').scrollIntoView()}});
+el('rows').addEventListener('click',e=>{let b=e.target.closest('button[data-height]');if(b){el('storey').value=b.dataset.height;render();el('choiceDialog').close();el('sheet1').open=el('sheet2').open=true;el('sheet1').scrollIntoView()}});
 const shareFields={
- huone:'room',valipohja:'floor',katisyys:'hand',vasen:'end-left',oikea:'end-right',
+ kerroskorkeus:'storey',valipohja:'floor',katisyys:'hand',vasen:'end-left',oikea:'end-right',
  aukko:'choice',kerros:'siteH',vapaaKorkeus:'siteRoom',leveys:'siteW',syvyys:'siteD',
  tyomaakorot:'measured',kansilevy:'topBoard',kansiparketti:'topWood',otsalevy:'frontBoard',otsaparketti:'frontWood'
 };
@@ -481,6 +491,17 @@ for(const [key,id] of Object.entries(shareFields)){
   field.value=value;
   if(!field.value || !field.checkValidity())field.value=original;
  }
+}
+if(!incoming.has('kerroskorkeus') && incoming.has('huone')){
+ const previous=Number(incoming.get('huone'));
+ if(Number.isInteger(previous)&&previous>=2500&&previous<=3000)el('storey').value=previous+readField('floor');
+}
+for(const button of document.querySelectorAll('.helpDot')){
+ button.addEventListener('click',()=>{
+  const help=el(button.getAttribute('aria-controls'));
+  help.hidden=!help.hidden;
+  button.setAttribute('aria-expanded',String(!help.hidden));
+ });
 }
 function selectedUrl(){
  const url=new URL(location.pathname,location.origin);
