@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Tilausvahvistuksen QR-koodi | KIDE</title>
+  <link rel="stylesheet" href="asiakas.css">
+  <style>#code{max-width:18rem}#code svg{width:100%;height:auto}button{margin-top:1rem}@media print{body{background:white}button,small{display:none}}</style>
+</head>
+<body><main><header><span>KIDE</span><h1>Tilausvahvistus</h1></header>
+  <p id="message">Avaa tilauksen oma vahvistuslinkki KIDEn tilausseurannasta.</p>
+  <section id="card" hidden>
+    <div id="code"></div><a id="order" rel="noreferrer">Avaa tilausvahvistus</a><br>
+    <button type="button" id="print">Tulosta QR-koodi</button>
+  </section>
+</main><script src="qrcode.js"></script><script>
+  'use strict';
+  function showOrder(){
+    const card=document.getElementById('card'), code=document.getElementById('code'), link=document.getElementById('order');
+    const message=document.getElementById('message');
+    card.hidden=true;code.replaceChildren();link.removeAttribute('href');
+    message.textContent='Avaa tilauksen oma vahvistuslinkki KIDEn tilausseurannasta.';
+    let url;
+    try{url=new URL(decodeURIComponent(location.hash.slice(1)));}catch{return;}
+    if(url.origin!=='https://docs.google.com'||url.username||url.password||url.search||url.hash||
+       !/^\/forms\/d\/e\/[A-Za-z0-9_-]+\/viewform$/.test(url.pathname))return;
+    const qr=qrcode(0,'M');qr.addData(url.href);qr.make();
+    code.innerHTML=qr.createSvgTag({scalable:true,alt:'Tämän tilauksen vahvistuslomake'});
+    link.href=url.href;card.hidden=false;
+    message.textContent='Skannaa koodi tai avaa linkki. Tarkista tarjousnumero, hinta ja toimitusviikko ennen kuittausta.';
+  }
+  document.getElementById('print').addEventListener('click',()=>window.print());
+  addEventListener('hashchange',showOrder);showOrder();
+</script></body></html>

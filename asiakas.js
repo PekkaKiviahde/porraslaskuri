@@ -2,15 +2,9 @@
 
 const el = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
-const scopeLabels = {
-  lower: 'Alaboksi ja kääntötaso',
-  upper: 'Yläaskelmien puuosat ja parketit',
-  steel: 'Yläsyöksyn metallirunko ja askelkannakkeet'
-};
 const glossLabels = {matta: 'Matta', puolihimmea: 'Puolihimmeä', kiiltava: 'Kiiltävä'};
 const colours = {'9005': 'Syvänmusta', '7016': 'Antrasiitinharmaa', '7035': 'Vaaleanharmaa', '9016': 'Liikennevalkoinen'};
 const form = el('quoteForm');
-const scopeFields = Array.from(el('quoteScopes').querySelectorAll('input'));
 const consultation = 'Pyydän KIDEn tuote-ehdotusta';
 
 function readDesign(q) {
@@ -52,38 +46,30 @@ function readDesign(q) {
   drawings.hash='arkit';
   return {description:'Tilavaraus 1 800 × '+num(m.depth)+' mm. Kapeat askelmat '+sideName+
     (opening?'. Aukko '+opening+'.':'. Aukkovalinta avoin.'), dimensions:dimensions.join('\n'), drawings:drawings.href,
-    valid:!opening || headroomOk(m,opening)};
+    valid:!opening || headroomOk(m,opening), model:m, right:side==='right'};
 }
 
 const design = readDesign(params);
+el('glassData').hidden=!design;
+if(design)showGlassDimensions(el('glassData'),design.model,design.right);
 el('designSummary').textContent=design?.description || 'Pyydä arkkitehdilta voimassa oleva suunnittelulinkki, jotta mitat tulevat tarjouspyyntöön.';
 el('quoteDimensions').textContent=design?.dimensions || '';
 el('beamSize').textContent='120 × 120 mm';
-if(params.has('toimituserat')){
-  const choices=params.get('toimituserat').split(',').filter(Boolean);
-  if(choices.every(s=>Object.hasOwn(scopeLabels,s)))scopeFields.forEach(field=>field.checked=choices.includes(field.value));
-}
 if(Object.hasOwn(glossLabels,params.get('kiiltoaste')))el('steelGloss').value=params.get('kiiltoaste');
 if(Object.hasOwn(colours,params.get('ral')))form.elements.steelRal.value=params.get('ral');
 
 function refresh(){
-  const selected=scopeFields.filter(field=>field.checked).map(field=>field.value);
-  const steel=selected.includes('steel'), wood=selected.some(v=>v==='lower'||v==='upper');
-  const chosen=wood && el('quoteChosen').checked;
-  el('steelFinish').hidden=el('steelFinish').disabled=!steel;
-  el('quoteParquet').hidden=el('quoteParquet').disabled=!wood;
+  const chosen=el('quoteChosen').checked;
   el('quoteProductLabel').hidden=el('quoteProduct').disabled=!chosen;
   el('quoteProduct').required=chosen;
   const problem=!design?'Suunnitelman mitat puuttuvat. Avaa arkkitehdin antama linkki.':
-    !design.valid?'Pyydä arkkitehtia tarkistamaan valitun aukon kulkukorkeus.':
-    selected.length?'':'Valitse vähintään yksi tarjouskohde.';
+    !design.valid?'Pyydä arkkitehtia tarkistamaan valitun aukon kulkukorkeus.':'';
   el('quoteIssue').textContent=problem;el('quoteIssue').hidden=!problem;el('quoteSend').disabled=!!problem;
   const gloss=glossLabels[el('steelGloss').value], ral=form.elements.steelRal.value;
-  const coating=steel && gloss && colours[ral] ? 'Teräspalkin maalaus · '+gloss+' · RAL '+ral+' · '+colours[ral] : '';
-  el('quoteDesign').value=problem?'':[design.dimensions,...selected.map(v=>scopeLabels[v]),coating,
+  const coating=gloss && colours[ral] ? 'Teräspalkin maalaus · '+gloss+' · RAL '+ral+' · '+colours[ral] : '';
+  el('quoteDesign').value=problem?'':[design.dimensions,'Koko portaikko asennettuna','Lasikaide hankitaan erikseen.',coating,
     'Avaa piirustukset samoilla mitoilla',design.drawings].filter(Boolean).join('\n');
-  el('quotePreference').value=!wood?'Vain metallitoimitus':
-    chosen?'Valittu parketti · '+el('quoteProduct').value.trim():el('quoteSuggest').checked?consultation:'';
+  el('quotePreference').value=chosen?'Valittu parketti · '+el('quoteProduct').value.trim():el('quoteSuggest').checked?consultation:'';
 }
 let lastDraft='',reference='';
 form.addEventListener('input',()=>{

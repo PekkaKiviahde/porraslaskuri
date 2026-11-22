@@ -1,16 +1,11 @@
 <!doctype html>
 <html lang="fi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Oma porrastarjous | KIDE</title><link rel="stylesheet" href="asiakas.css"></head>
-<body><main><header><span>KIDE</span><h1>Pyydä tarjous portaastasi</h1>
-<p>Arkkitehtisi valitsemat mitat ovat mukana. KIDE vastaa sinulle kokoamallaan tarjouksella.</p></header>
+<body><main><header><span>KIDE</span><h1>Pyydä tarjous koko portaikosta</h1>
+<p>Pakettiin kuuluvat alaboksi, kääntötaso, yläaskelmat, metallirunko kannakkeineen sekä asennus. Lasikaiteen hankit erikseen arkkitehdin mittatietojen avulla.</p></header>
 <section aria-labelledby="suunnitelma"><h2 id="suunnitelma">Arkkitehdin suunnitelma</h2>
-<p id="designSummary"></p><details><summary>Katso suunnitelman mitat</summary><p id="quoteDimensions"></p></details></section>
+<p id="designSummary"></p><details><summary>Katso suunnitelman mitat</summary><p id="quoteDimensions"></p></details><details id="glassData"></details></section>
 <form id="quoteForm" method="post" action="https://docs.google.com/forms/d/e/1FAIpQLSeo2rHaoUPEGuiwwnBsuAd-qj6AQZ9IZlX28a5T8Y8l7QjO5w/formResponse" target="_blank" rel="noopener noreferrer">
-  <fieldset id="quoteScopes"><legend>Mistä haluat tarjouksen?</legend>
-    <label class="quoteOption"><input type="checkbox" value="lower" checked> Alaboksi ja kääntötaso</label>
-    <label class="quoteOption"><input type="checkbox" value="upper" checked> Yläaskelmat</label>
-    <label class="quoteOption"><input type="checkbox" value="steel" checked> Yläsyöksyn metallirunko ja kannakkeet</label>
-  </fieldset>
   <fieldset id="steelFinish"><legend>Teräspalkin maalaus</legend>
     <p>Palkin ulkomitat <b id="beamSize"></b></p>
     <label>Kiiltoaste<select id="steelGloss" required>
@@ -37,4 +32,4 @@
   <button type="submit" id="quoteSend" disabled>Lähetä tarjouspyyntö</button>
   <small>Saat vastaanottokuittauksen uudessa välilehdessä. KIDE käyttää yhteystietoasi tarjouspyyntöön vastaamiseen.</small>
 </form>
-</main><script src="geometria.js"></script><script src="asiakas.js"></script></body></html>
+</main><script src="geometria.js"></script><script src="kaidemitat.js?v=1"></script><script src="asiakas.js?v=kokonaisuus1"></script></body></html>
