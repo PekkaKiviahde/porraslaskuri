@@ -1,7 +1,7 @@
 'use strict';
 function architectStations(m){
- const lower=Array.from({length:m.n},(_,i)=>m.depth-(m.n-1-i)*250);
- const upper=Array.from({length:m.n-1},(_,i)=>850+i*250);
+ const lower=Array.from({length:m.n},(_,i)=>m.depth-(m.n-1-i)*m.going);
+ const upper=Array.from({length:m.n-1},(_,i)=>850+i*m.going);
  const levels=Array.from({length:2*m.n+1},(_,i)=>i*m.rise);
  const stations=(...lists)=>[...new Set([0,...lists.flat()])].sort((a,b)=>a-b);
  return {lower:stations(lower,upper),upper:stations(upper,[m.A]),levels};
@@ -58,10 +58,10 @@ function drawArchitectSheets(m,right){
   if(!variant){
    seg(0,0,W,0);seg(0,0,0,D);seg(W,0,W,D);
    for(let i=1;i<=n;i++){
-    const b=D-(i-1)*250, narrow=i%2===0;
-    seg(0,b,narrow?850:W,b);if(narrow)seg(850,b,850,b-250);
+    const b=D-(i-1)*m.going, narrow=i%2===0;
+    seg(0,b,narrow?850:W,b);if(narrow)seg(850,b,850,b-m.going);
    }
-   for(let i=0;i<n-1;i++)seg(950,850+i*250,W,850+i*250,.18,'2 1');
+   for(let i=0;i<n-1;i++)seg(950,850+i*m.going,W,850+i*m.going,.18,'2 1');
    for(const [v,sgn,label] of [[160,right?-1:1,'L'],[1640,right?1:-1,'M']]){
     line(x(v),y-2,x(v),Y(D)+2,.25,'3 1 .5 1');
     for(const yy of [y-2,Y(D)+2]){arrow(x(v)-5*sgn,yy,x(v),yy);text(x(v)-7*sgn,yy+1,label);}
@@ -69,7 +69,7 @@ function drawArchitectSheets(m,right){
    for(const p of endPanels().filter(p=>p.state==="yes")){const px=left+(p.side==="left"?0:W*scale);text(px+(p.side==="left"?3:-3),Y(D)-2,p.code,2.7);}
    arrow(x(540),Y(D-130),x(540),Y(D-670));arrow(x(1350),Y(1150),x(1350),Y(1750));
    run(stations.lower,Y,left+W*scale+5,true);
-   dimV(y,Y(D),left-6,f(D));dimV(y,Y(1100),left-14,'1 100');
+   dimV(y,Y(D),left-6,f(D));dimV(y,Y(m.landing),left-14,f(m.landing));
    dimV(y,Y(850),left+W*scale+22,'850');
    dimH(x(0),x(W),y-15,'1 800');
    const middle=y-7;dimH(x(0),x(850),middle,'850');dimH(x(950),x(W),middle,'850');
@@ -79,7 +79,7 @@ function drawArchitectSheets(m,right){
    for(let j=1;j<q.length;j++)seg(...q[j-1],...q[j],.5);
    dimH(x(0),x(W),y-4,'1 800');
    dimV(y,Y(e),x(0)+(right?6:-6),f(e));dimV(y,Y(m.A),x(W)+(right?-6:6),f(m.A));
-   if(variant==='B'){dimH(x(0),x(850),Y(e)-5,'850');dimV(Y(e),Y(m.A),x(850)+(right?6:-6),'250');}
+   if(variant==='B'){dimH(x(0),x(850),Y(e)-5,'850');dimV(Y(e),Y(m.A),x(850)+(right?6:-6),f(m.going));}
    for(const v of stations.upper.slice(1,-1))seg(950,v,W,v,.25);
    run(stations.upper,Y,left+W*scale+19,true);
    const cut=x(160),direction=right?-1:1;
@@ -95,17 +95,17 @@ function drawArchitectSheets(m,right){
   const seg=(a,b,c,d,w=.25,dash='')=>line(x(a),y(b),x(c),y(d),w,dash);
   seg(0,0,D+200,0);
   for(let i=1;i<n;i++){
-   const a=D-(i-1)*250, full=i%2===1, w=!wide||full?.7:.25;
+   const a=D-(i-1)*m.going, full=i%2===1, w=!wide||full?.7:.25;
    // The raised landing projects 250 mm further on the lower-flight side.
    const prev=wide&&full?Math.max(0,i-2):i-1;
-   seg(a,prev*r,a,i*r,w);seg(a,i*r,a-(wide&&full?500:250),i*r,w);
+   seg(a,prev*r,a,i*r,w);seg(a,i*r,a-(wide&&full?2*m.going:m.going),i*r,w);
   }
   // Lower flight reaches the 1 100 mm landing edge on both lower tread lanes.
-  seg(0,H/2,1100,H/2,.7);
-  seg(1100,(wide?n-2:n-1)*r,1100,H/2,.7);
+  seg(0,H/2,m.landing,H/2,.7);
+  seg(m.landing,(wide?n-2:n-1)*r,m.landing,H/2,.7);
   const upperCut=wide;
   for(let i=1;i<n;i++){
-   const a=850+(i-1)*250,z=(n+i)*r,w=upperCut?.7:.25;
+   const a=850+(i-1)*m.going,z=(n+i)*r,w=upperCut?.7:.25;
    seg(a,z,a+270,z,w);seg(a+270,z,a+270,z-m.box,w);seg(a+270,z-m.box,a,z-m.box,w);seg(a,z-m.box,a,z,w);
   }
   const e=opening?m[opening]:m.A;
@@ -113,19 +113,19 @@ function drawArchitectSheets(m,right){
   text(x(340),y(H/2)-1.8,level(H/2),2.7);
   text(x(D+160),y(H)-1.5,level(H),2.7);
   if(opening){
-   seg(1100,H/2,D,r,.13,'2 1');
+   seg(m.landing,H/2,D,r,.13,'2 1');
    const head=m.head(e),z=m.room-head;
    dimV(y(z),y(m.room),x(e),f(Math.round(head)));
    dimH(x(0),x(e),y(H)-5,f(e));
    text(x(e)+dir*4,(y(z)+y(m.room))/2,'vapaa',2.7,'middle',-90);
   }else{
-   dimH(x(0),x(1100),y(H/2)+6,'1 100');
+   dimH(x(0),x(m.landing),y(H/2)+6,f(m.landing));
    dimH(x(0),x(850),y((n+1)*r)-5,'850');
-   const i=wide?3:4,a=D-(i-1)*250,step=wide?500:250;
+   const i=wide?3:4,a=D-(i-1)*m.going,step=wide?2*m.going:m.going;
    dimH(x(a),x(a-step),y(i*r)+5,f(step));
    dimV(y(i*r),y((i-(wide?2:1))*r),x(a)+dir*4,f((wide?2:1)*r));
 
-   const ux=850+250;dimH(x(ux),x(ux+250),y((n+2)*r)-7,'250');
+   const ux=850+m.going;dimH(x(ux),x(ux+m.going),y((n+2)*r)-7,f(m.going));
   }
   run(stations.lower,x,base+4,false);
   run(stations.levels,y,left+(D+270)*scale+8,true);
@@ -150,10 +150,10 @@ function drawArchitectSheets(m,right){
  text(12,171,'Etukuva · alaboksi alapäästä',4,'start');front(43,248);
  text(191,24,'Pituusleikkaus L–L · kapeiden askelmien kautta',4,'start');profile(208,137,false,null);
  text(191,161,'Pituusleikkaus M–M · leveiden askelmien kautta',4,'start');profile(208,268,true,null);
- text(120,65,'Tasanteen siirto 250 mm',3,'start');
+ text(120,65,'Tasanteen siirto '+f(m.going)+' mm',3,'start');
  text(117,73,'Kaidevara 100 mm',3,'start');
  text(117,86,'L–L ja M–M',3.4,'start');text(117,92,'160 mm sivureunasta',3,'start');
- text(117,111,'Yläaskelma',3.4,'start');text(117,117,'Syvyys 270',3,'start');text(117,123,'Etenemä 250',3,'start');text(117,129,'Vapaa rako 100',3,'start');
+ text(117,111,'Yläaskelma',3.4,'start');text(117,117,'Syvyys 270',3,'start');text(117,123,'Etenemä '+f(m.going),3,'start');text(117,129,'Vapaa rako 100',3,'start');
  finish('ark1','Tilavaraus '+f(W)+' × '+f(D)+' · kerroskorkeus '+f(H)+' · '+n+' + '+n+' nousua · yksi nousu '+f(r));
  header('Yläkerran vapaan aukon vertailu',2);
  for(const [k,off] of [['A',0],['B',207]]){

@@ -4,7 +4,7 @@
 function purchaseRows(m, top, front, allowance, panelLength, panelWidth) {
   const horizontal = 1800 * m.depth;
   const risers = 1800 * m.H / 2;
-  const returns = ((m.n - 1) / 2) * 250 * m.rise;
+  const returns = ((m.n - 1) / 2) * m.going * m.rise;
   const items = new Map();
   function add(product, size, area, unitArea, unit, use) {
     const key = product + size;
@@ -37,7 +37,7 @@ function updateMaterials(m,top,front) {
     el('stockControls').addEventListener('input',render);
   }
   const length=readField('stockLength'),width=readField('stockWidth'),waste=readField('stockWaste');
-  if (!top || !front || ![length,width,waste].every(Number.isFinite) || length<=0 || width<=0 || waste<0 || waste>100 || top.total>=m.rise || front.total>=250) {
+  if (!top || !front || ![length,width,waste].every(Number.isFinite) || length<=0 || width<=0 || waste<0 || waste>100 || top.total>=m.rise || front.total>=m.going) {
     buy.textContent=supply.textContent='Tarkista pintakerrokset, levyaihion mitat ja hukkavara.';
     download.disabled=true;
     return;
