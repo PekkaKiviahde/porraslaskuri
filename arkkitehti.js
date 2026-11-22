@@ -10,7 +10,7 @@ function architectStations(m){
  const stations=(...lists)=>[...new Set([0,...lists.flat()])].sort((a,b)=>a-b);
  return {lower:stations(lower,upper),upper:stations(upper,[m.A]),levels};
 }
-function drawArchitectSheets(m,right,selectedOpening){
+function drawArchitectSheets(m,right,selectedOpening,siteWarning){
  const n=m.n,r=m.rise,D=m.depth,W=1800,H=m.H;
  // Both comparison plans share the same A3 row. Leave space for their bottom
  // cumulative dimensions before the L–L headings, including the 11 + 11 run.
@@ -57,11 +57,13 @@ function drawArchitectSheets(m,right,selectedOpening){
   line(9,15,411,15,.35);
  }
  function finish(id,caption){
-  line(9,279,411,279,.25);text(9,285,caption,3,'start');
+  const captionY=siteWarning?283:285,selectionY=siteWarning?288.5:292;
+  line(9,279,411,279,.25);text(9,captionY,caption,3,'start');
   if(selectedOpening&&!headroomOk(m,selectedOpening)){
-   text(411,285,'Aukko '+selectedOpening+' alittaa 1 950 mm:n vähimmäiskulkukorkeuden',3.2,'end');
+   text(411,captionY,'Aukko '+selectedOpening+' alittaa 1 950 mm:n vähimmäiskulkukorkeuden',3.2,'end');
   }
-  text(9,292,'Mitat mm · alakerran valmis lattia ±0,000 · välipohja '+f(m.floor)+' · etenemä '+f(m.going)+' · kapeat askelmat '+(right?'oikealla':'vasemmalla')+' noustessa · päädyt '+sheetEndSelection(),3,'start');
+  text(9,selectionY,'Mitat mm · alakerran valmis lattia ±0,000 · välipohja '+f(m.floor)+' · etenemä '+f(m.going)+' · kapeat askelmat '+(right?'oikealla':'vasemmalla')+' noustessa · päädyt '+sheetEndSelection(),3,'start');
+  if(siteWarning)text(9,294,siteWarning,3.2,'start');
   document.getElementById(id).innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 297" role="img" aria-label="'+caption+'">'+parts.join('')+'</svg>';
  }
  const Xp=(left,v)=>left+(right?W-v:v)*scale;
