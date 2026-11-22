@@ -1,0 +1,29 @@
+:root{font:16px/1.55 "Source Sans 3",Arial,sans-serif;color:#1d3033;background:#f4f3ef}
+*{box-sizing:border-box}
+body{margin:0}
+main{max-width:46rem;margin:0 auto;padding:clamp(1rem,4vw,3rem)}
+header{padding:1rem 0;border-bottom:3px solid #194640}
+header span{font-weight:750;letter-spacing:.12em;color:#194640}
+h1,h2{line-height:1.14;margin:.6rem 0}
+h1{font:normal clamp(2.1rem,6vw,3.4rem)/1.05 Georgia,serif}
+h2{font-size:1.3rem}
+p{margin:.65rem 0}
+section,fieldset{background:#fff;border:1px solid #c5cfca;border-radius:5px;padding:.85rem 1rem;min-width:0}
+section{margin:1.2rem 0}
+form{display:grid;gap:1rem}
+legend,form>label{font-weight:650}
+fieldset{margin:0}
+.quoteOption{display:flex;align-items:center;gap:.65rem;min-height:44px}
+input,select,button{font:inherit}
+input[type=checkbox],input[type=radio]{width:1.15rem;height:1.15rem;accent-color:#194640;flex:none}
+input[type=text],select{display:block;width:100%;padding:.55rem .65rem;border:1px solid #72857e;border-radius:3px;background:#fff}
+.toneGroup{border:0;padding:0;margin-top:.8rem}
+.toneGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr))}
+.swatch{width:1.25rem;height:1.25rem;border:1px solid #73817d;background:var(--sample);border-radius:2px;flex:none}
+button{justify-self:start;padding:.65rem 1.2rem;border:0;border-radius:4px;background:#194640;color:white;cursor:pointer}
+button:disabled{background:#596560;cursor:default}
+small{color:#455a55}
+summary{cursor:pointer;color:#194640}
+#quoteDimensions{white-space:pre-line}
+#quoteIssue{color:#8e3025}
+[hidden]{display:none!important}

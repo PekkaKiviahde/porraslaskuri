@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Oma porrastarjous | KIDE</title><link rel="stylesheet" href="asiakas.css"></head>
+<body><main><header><span>KIDE</span><h1>Pyydä tarjous portaastasi</h1>
+<p>Arkkitehtisi valitsemat mitat ovat mukana. KIDE vastaa sinulle kokoamallaan tarjouksella.</p></header>
+<section aria-labelledby="suunnitelma"><h2 id="suunnitelma">Arkkitehdin suunnitelma</h2>
+<p id="designSummary"></p><details><summary>Katso suunnitelman mitat</summary><p id="quoteDimensions"></p></details></section>
+<form id="quoteForm" method="post" action="https://docs.google.com/forms/d/e/1FAIpQLSeo2rHaoUPEGuiwwnBsuAd-qj6AQZ9IZlX28a5T8Y8l7QjO5w/formResponse" target="_blank" rel="noopener noreferrer">
+  <fieldset id="quoteScopes"><legend>Mistä haluat tarjouksen?</legend>
+    <label class="quoteOption"><input type="checkbox" value="lower" checked> Alaboksi ja kääntötaso</label>
+    <label class="quoteOption"><input type="checkbox" value="upper" checked> Yläaskelmat</label>
+    <label class="quoteOption"><input type="checkbox" value="steel" checked> Yläsyöksyn metallirunko ja kannakkeet</label>
+  </fieldset>
+  <fieldset id="steelFinish"><legend>Teräspalkin maalaus</legend>
+    <p>Palkin ulkomitat <b id="beamSize"></b></p>
+    <label>Kiiltoaste<select id="steelGloss" required>
+      <option value="">Valitse kiiltoaste</option><option value="matta">Matta</option>
+      <option value="puolihimmea">Puolihimmeä</option><option value="kiiltava">Kiiltävä</option>
+    </select></label>
+    <fieldset class="toneGroup"><legend>RAL-vakiosävy</legend><div class="toneGrid">
+      <label class="quoteOption"><input type="radio" name="steelRal" value="9005" required><span class="swatch" aria-hidden="true" style="--sample:#232323"></span><span>RAL 9005 · Syvänmusta</span></label>
+      <label class="quoteOption"><input type="radio" name="steelRal" value="7016"><span class="swatch" aria-hidden="true" style="--sample:#3d4246"></span><span>RAL 7016 · Antrasiitinharmaa</span></label>
+      <label class="quoteOption"><input type="radio" name="steelRal" value="7035"><span class="swatch" aria-hidden="true" style="--sample:#c9cdca"></span><span>RAL 7035 · Vaaleanharmaa</span></label>
+      <label class="quoteOption"><input type="radio" name="steelRal" value="9016"><span class="swatch" aria-hidden="true" style="--sample:#f1f2ed"></span><span>RAL 9016 · Liikennevalkoinen</span></label>
+    </div></fieldset>
+    <small>Näytön värinäytteet ovat suuntaa antavia. <a href="https://www.ral-farben.de/en/all-ral-colours" target="_blank" rel="noopener">RAL-värikartta</a></small>
+  </fieldset>
+  <fieldset id="quoteParquet"><legend>Oletko jo valinnut parketin?</legend>
+    <label class="quoteOption"><input id="quoteChosen" type="radio" name="parquetMode" value="chosen" required> Olen valinnut parketin</label>
+    <label class="quoteOption"><input id="quoteSuggest" type="radio" name="parquetMode" value="suggest" required> Toivon KIDEn tuote-ehdotusta</label>
+  </fieldset>
+  <label id="quoteProductLabel" hidden>Valitun parketin nimi tai tuotekoodi<input id="quoteProduct" type="text" maxlength="160" disabled></label>
+  <label>Sähköposti tai puhelinnumero vastausta varten<input id="quoteContact" type="text" name="entry.1183719507" maxlength="180" required></label>
+  <input type="hidden" id="quoteDesign" name="entry.1090514694">
+  <input type="hidden" id="quotePreference" name="entry.354014929">
+  <p id="quoteIssue" role="status" hidden></p>
+  <button type="submit" id="quoteSend" disabled>Lähetä tarjouspyyntö</button>
+  <small>Saat vastaanottokuittauksen uudessa välilehdessä. KIDE käyttää yhteystietoasi tarjouspyyntöön vastaamiseen.</small>
+</form>
+</main><script src="geometria.js"></script><script src="asiakas.js"></script></body></html>
