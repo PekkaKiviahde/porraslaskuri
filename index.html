@@ -463,7 +463,7 @@ function render(){
  updateShareQr();
  if(issues.length)return;
  const m=model(room,floor);drawArchitectSheets(m,right);renderEndPanels(m,right);
- el('metrics').innerHTML='<div>Tilavaraus, leveys × syvyys<b>1 800 × '+num(m.depth)+' mm</b></div><div>Kerroskorkeus<b>'+num(m.H)+' mm</b></div><div>Yksi nousu<b>'+num(m.rise,1)+' mm</b></div>';
+ el('metrics').innerHTML='<div>Tilavaraus, leveys × syvyys<b>1 800 × '+num(m.depth)+' mm</b></div><div>Kerroskorkeus<b>'+num(m.H)+' mm</b></div><div>Etenemä<b>250 mm</b></div><div>Yksi nousu<b>'+num(m.rise,1)+' mm</b></div>';
  el('lower').innerHTML=plan(m,right,'ala');
  el('dims').innerHTML='<h3>Alaboksi ja kääntötaso</h3><p>Kapeat askelmat '+(right?'oikealla':'vasemmalla')+' alhaalta noustaessa. Kääntötaso on puolessa kerroskorkeudessa.</p><p><b>Leveys</b> 850 + 100 + 850 = 1 800 mm. Keskimmäinen 100 mm on kaidevara.</p><p><b>Tasannesyvyys</b> yläsyöksyn valmiista lähtöreunasta takaseinään 850 mm, alaboksin kohdalla 1 100 mm.</p><p><b>Alaboksin siirto</b> 250 mm. Syöksyn vaakapituus '+num(m.run)+' mm. Leveiden askelmien väli kulkusuunnassa 500 mm, kapean askelman etenemä 250 mm.</p><small>Yhtenäinen nuoli osoittaa nousun, katkoviiva yläpuolisen askelman ja pistekatkoviiva leikkaustason. C ja D katsovat vastakkaisiin suuntiin.</small>';
  el('compare').innerHTML=['A','B'].map(k=>'<article><h3>'+k+' · '+(k==='A'?'Suorakaiteinen aukko':'Porrastettu aukko')+'</h3>'+plan(m,right,k)+'<h3>Pituusleikkaus L–L</h3>'+longitudinal(m,right,k)+'<p>Vapaa korkeus aukon reunassa <b>'+num(m.head(m[k]))+' mm</b>.</p></article>').join('');
