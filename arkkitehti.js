@@ -66,6 +66,7 @@ function drawArchitectSheets(m,right){
     line(x(v),y-2,x(v),Y(D)+2,.25,'3 1 .5 1');
     for(const yy of [y-2,Y(D)+2]){arrow(x(v)-5*sgn,yy,x(v),yy);text(x(v)-7*sgn,yy+1,label);}
    }
+   for(const p of endPanels().filter(p=>p.state==="yes")){const px=left+(p.side==="left"?0:W*scale);text(px+(p.side==="left"?3:-3),Y(D)-2,p.code,2.7);}
    arrow(x(540),Y(D-130),x(540),Y(D-670));arrow(x(1350),Y(1150),x(1350),Y(1750));
    run(stations.lower,Y,left+W*scale+5,true);
    dimV(y,Y(D),left-6,f(D));dimV(y,Y(1100),left-14,'1 100');
@@ -130,6 +131,7 @@ function drawArchitectSheets(m,right){
   run(stations.levels,y,left+(D+270)*scale+8,true);
  }
  function front(left,base){
+  for(const p of endPanels().filter(p=>p.state==="yes")){const px=left+(p.side==="left"?0:W*scale);const tx=px+(p.side==="left"?5:-5);line(px,base-r*scale/2,tx,base-1,.13);text(tx,base-1,p.code,2.7);}
   const x=v=>left+v*scale,y=z=>base-z*scale, edge=right?950:850;
   line(x(0),base,x(W),base);line(x(0),base,x(0),y(H/2));line(x(W),base,x(W),y(H/2));
   for(let i=1;i<=n;i++){

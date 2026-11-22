@@ -13,13 +13,13 @@ svg [data-viiva="reuna"]{stroke-width:var(--reuna)}
 svg [data-viiva="mitta"]{stroke-width:var(--mitta)}
 svg [data-viiva="runkoleikkaus"]{stroke-width:var(--runkoleikkaus)}
 #choiceDialog{max-width:min(96vw,1100px);max-height:85vh;padding:22px;border:1px solid #82958f;border-radius:6px}#choiceDialog h2{margin-top:0}#choiceDialog::backdrop{background:#17282a70}.dismiss{float:right}#openChoices{padding:9px 15px;margin:16px 0}@media print{#arkit details{display:block;margin:0;padding:0;border:0;break-after:page}#arkit summary{display:none}#arkit details::details-content{display:contents;content-visibility:visible}} </style><main><header><h1>Portaikon tilavaraus</h1><p>Asunnon sisäinen paluuporras · Arkkitehdin luonnos</p></header>
-<form id="inputs" onsubmit="return false"><label>Huonekorkeus (mm)<input required type="number" min="2500" max="3000" step="1" id="room" value="2700"></label><label>Välipohjan kokonaispaksuus (mm)<input required type="number" min="1" max="3000" step="1" id="floor" value="550"></label><label>Kapeat askelmat noustessa<select id="hand"><option value="left">Vasemmalla</option><option value="right" selected>Oikealla</option></select></label></form><details id="sitebox"><summary>Työmaan tarkemitat</summary><p>Mittaa korkeudet samasta alakerran valmiin lattian lähtötasosta ±0,000. Keskeneräisessä kohteessa siirrä suunnitellut valmiit pinnat korkomerkein. Mittaa tila useasta kohdasta ja syötä pienin vapaa leveys ja syvyys.</p><div class="fields">
+<form id="inputs" onsubmit="return false"><label>Huonekorkeus (mm)<input required type="number" min="2500" max="3000" step="1" id="room" value="2700"></label><label>Välipohjan kokonaispaksuus (mm)<input required type="number" min="1" max="3000" step="1" id="floor" value="550"></label><label>Kapeat askelmat noustessa<select id="hand"><option value="left">Vasemmalla</option><option value="right" selected>Oikealla</option></select></label><fieldset style='grid-column:1/-1;min-width:0'><legend>Alimman boksin päädyt</legend><p>Katso portaita alhaalta ylöspäin.</p><div class='fields'><label>Vasemmalle päätykappale?<select id='end-left'><option value='open'>Avoin</option><option value='yes'>Kyllä</option><option value='no'>Ei</option></select></label><label>Oikealle päätykappale?<select id='end-right'><option value='open'>Avoin</option><option value='yes'>Kyllä</option><option value='no'>Ei</option></select></label></div></fieldset></form><details id="sitebox"><summary>Työmaan tarkemitat</summary><p>Mittaa korkeudet samasta alakerran valmiin lattian lähtötasosta ±0,000. Keskeneräisessä kohteessa siirrä suunnitellut valmiit pinnat korkomerkein. Mittaa tila useasta kohdasta ja syötä pienin vapaa leveys ja syvyys.</p><div class="fields">
 <label>Valmiista lattiasta valmiiseen lattiaan (mm)<input id="siteH" type="number" step="any" min="1"></label>
 <label>Alalattiasta valmiiseen kattoon (mm)<input id="siteRoom" type="number" step="any" min="1"></label>
 <label>Vapaa leveys sivupintojen välissä (mm)<input id="siteW" type="number" step="any" min="1"></label>
 <label>Vapaa syvyys takaseinästä alapään tilarajaan (mm)<input id="siteD" type="number" step="any" min="1"></label></div>
 <label class="check"><input type="checkbox" id="measured"> Käytä työmaan korkoja kaikissa piirustuksissa ja runkotaulukossa</label><p id="siteReport" role="status"></p></details>
-<p id="error" class="err" role="status"></p><div id="results"><div class="metrics" id="metrics" aria-live="polite"></div>
+<p id="error" class="err" role="status"></p><div id="results"><article id="end-preview"><h3>Alimman boksin päätykappaleet</h3><div id="end-front"></div><h4>Osaluettelo · päätykappaleet</h4><div id="end-list" aria-live="polite"></div></article><div class="metrics" id="metrics" aria-live="polite"></div>
 <button type="button" id="openChoices" aria-haspopup="dialog">Avaa arkkitehdin valintataulukko</button><dialog id="choiceDialog" aria-labelledby="choiceHeading"><button type="button" class="dismiss" autofocus>Sulje</button><h2 id="choiceHeading">Arkkitehdin valintataulukko</h2><p>Kaikki mitat millimetreinä. Valitse huonekorkeus riviltä päivittääksesi piirustukset. Aukkopituudet mitataan valmiista takaseinästä.</p><div class="scroll"><table><thead><tr><th>Huone­korkeus</th><th>Kerros­korkeus</th><th>Nousut</th><th>Tila L × S</th><th>Yläsyöksyn aukko A/B</th><th>Alaboksin aukko A</th><th>Alaboksin aukko B</th><th>Vapaa korkeus A</th><th>Vapaa korkeus B</th></tr></thead><tbody id="rows"></tbody></table></div></dialog><section id="arkit"><details open id="sheet1"><summary>Arkki 1 · Portaikon valmiit mitat</summary><article id="ark1"></article></details><details open id="sheet2"><summary>Arkki 2 · A- ja B-aukkojen vertailu</summary><article id="ark2"></article></details></section><details id="alakerta"><summary>Alakerran pohja</summary><div class="grid"><figure id="lower"></figure><article id="dims"></article></div>
 </details><details id="pituudet"><summary>Yläkerran aukko ja pituusleikkaus L–L</summary><p>A ja B on kohdistettu samaan valmiiseen takaseinään. Nuoli portaassa osoittaa noususuunnan.</p><label>Aukkovaihtoehto<select id="choice"><option value="">Vertaa A:ta ja B:tä</option><option value="A">A · Suorakaiteinen aukko</option><option value="B">B · Porrastettu aukko</option></select></label><p id="chosen" aria-live="polite"></p><div class="grid" id="compare"></div>
 </details><details id="poikki"><summary>Poikkileikkaus kahdesta suunnasta</summary><p>C–C ja D–D ovat samassa kohdassa. Vastakkaiset katsesuunnat osoittavat, kummalla puolella kapea askelma ja yläsyöksy sijaitsevat.</p><div class="grid" id="cross"></div>
@@ -73,6 +73,7 @@ function plan(m,right,type){
  if(lower){
  ln(0,0,1800,0,'edge');ln(0,0,0,m.depth,'edge');ln(1800,0,1800,m.depth,'edge');ln(0,1100,850,1100,'edge');
  for(let i=0;i<(m.n-1)/2;i++){let b=m.depth-i*500;ln(0,b,1800,b,'edge');ln(0,b-250,850,b-250,'edge');ln(850,b-250,850,b-500,'edge')}
+ for(const p of endPanels().filter(p=>p.state==="yes")){const px=p.side==="left"?x:x+1800*s;g.text(px+(p.side==="left"?16:-16),Y(m.depth)-9,p.code,11)}
  for(let i=0;i<m.n-1;i++)ln(950,850+i*250,1800,850+i*250,'hidden');
  sides(0,m.depth,0,num(m.depth));sides(0,850,1800,'850');g.dim(X(270),Y(0),X(270),Y(1100),'1 100');
  sides(m.A,m.depth,1800,'250');g.arrow(X(560),Y(m.depth-450),X(560),Y(1400));g.arrow(X(1430),Y(1300),X(1430),Y(m.A-300));
@@ -80,6 +81,7 @@ function plan(m,right,type){
  for(let [p,P,v] of [[0,850,'850'],[850,950,'100'],[950,1800,'850']])dh(p,P,Y(m.depth)+40,m.depth,m.depth,v);
  }else{
  let pts=[[0,0],[1800,0],[1800,m.A],[850,m.A],[850,e],[0,e],[0,0]];for(let i=1;i<pts.length;i++)ln(...pts[i-1],...pts[i],'edge');
+ for(const p of endPanels().filter(p=>p.state==="yes")){const px=p.side==="left"?x:x+1800*s;g.text(px+(p.side==="left"?16:-16),Y(m.depth)-9,p.code,11)}
  for(let i=0;i<m.n-1;i++)ln(950,850+i*250,1800,850+i*250);
  g.arrow(X(1400),Y(1250),X(1400),Y(m.A-320));sides(0,e,0,num(e));sides(0,m.A,1800,num(m.A));
  if(type==='B'){ln(0,m.A,850,m.A,'hidden');g.dim(X(450),Y(e),X(450),Y(m.A),'250');dh(0,850,Y(m.A)+35,e,m.A,'850');dh(850,1800,Y(m.A)+35,m.A,m.A,'950')}
@@ -398,12 +400,34 @@ function markChoice(){
  for(const card of el('compare').children){const selected=card.querySelector('h3').textContent.startsWith(k+' ·')&&!!k;card.classList.toggle('selected',selected)}
  el('chosen').textContent=k?'Arkkitehdin valinta: '+k+'.':'Molemmat vaihtoehdot avoinna.';
 }
+function endPanels(){
+ return [['left','Vasen','PV'],['right','Oikea','PO']].map(([side,name,code])=>({side,name,code,state:el('end-'+side).value}));
+}
+function renderEndPanels(m,right){
+ const panels=endPanels(), selected=panels.filter(p=>p.state==='yes'), pending=panels.filter(p=>p.state==='open');
+ const scale=.14, w=1800*scale, h=m.rise*scale, x=32, base=94;
+ const g=sheet(320,120,'Alimman boksin etukuva alhaalta katsottuna');
+ g.rect(x,base-h,w,h,'view','#eee9df');
+ g.rect(right?x+w-850*scale:x,base-2*h,850*scale,h,'view','#faf7ee');
+ for(const p of selected){
+  const px=p.side==='left'?x:x+w;
+  const inner=px+(p.side==='left'?1:-1)*(readField('frontWood') || 15)*scale;
+  g.rect(Math.min(px,inner),base-h,Math.abs(px-inner),h,'view','#b8b2a4');
+  const tx=px+(p.side==='left'?18:-18);
+  g.line(px,base-h/2,tx,base+8,'dim');
+  g.text(tx,base+20,p.code,12);
+ }
+ el('end-front').innerHTML=g.end();
+ const rows=selected.map(p=>'<tr><td>'+p.code+' · '+p.name.toLowerCase()+' päätykappale</td><td>1 kpl</td></tr>').join('');
+ el('end-list').innerHTML=(rows?'<table><thead><tr><th>Osa</th><th>Määrä</th></tr></thead><tbody>'+rows+'</tbody></table>':'<p>Valittuja päätykappaleita 0 kpl.</p>')+
+ (pending.length?'<p>Avoinna: '+pending.map(p=>p.name.toLowerCase()+' pääty').join(', ')+'.</p>':'');
+}
 function render(){
  const site=el('measured').checked,room=site?readField('siteRoom'):el('room').valueAsNumber,floor=site?readField('siteH')-room:el('floor').valueAsNumber,right=el('hand').value==='right';
  el('room').disabled=site;el('floor').disabled=site;el('siteReport').textContent='';
  const valid=Number.isFinite(room)&&room>=2500&&room<=3000&&Number.isFinite(floor)&&floor>0&&floor<=3000;
  el('results').hidden=!valid;el('error').textContent=valid?'':site?'Tarkista molemmat työmaakorot. Huonekorkeuden tulee olla 2 500–3 000 mm ja välipohjan 1–3 000 mm.':'Anna huonekorkeus 2 500–3 000 mm ja välipohjan paksuus 1–3 000 mm kokonaisina millimetreinä.';if(!valid)return;
- const m=model(room,floor);drawArchitectSheets(m,right);
+ const m=model(room,floor);drawArchitectSheets(m,right);renderEndPanels(m,right);
  el('metrics').innerHTML='<div>Tilavaraus, leveys × syvyys<b>1 800 × '+num(m.depth)+' mm</b></div><div>Kerroskorkeus<b>'+num(m.H)+' mm</b></div><div>Yksi nousu<b>'+num(m.rise,1)+' mm</b></div>';
  el('lower').innerHTML=plan(m,right,'ala');
  el('dims').innerHTML='<h3>Alaboksi ja kääntötaso</h3><p>Kapeat askelmat '+(right?'oikealla':'vasemmalla')+' alhaalta noustaessa. Kääntötaso on puolessa kerroskorkeudessa.</p><p><b>Leveys</b> 850 + 100 + 850 = 1 800 mm. Keskimmäinen 100 mm on kaidevara.</p><p><b>Tasannesyvyys</b> yläsyöksyn valmiista lähtöreunasta takaseinään 850 mm, alaboksin kohdalla 1 100 mm.</p><p><b>Alaboksin siirto</b> 250 mm. Syöksyn vaakapituus '+num(m.run)+' mm. Leveiden askelmien väli kulkusuunnassa 500 mm, kapean askelman etenemä 250 mm.</p><small>Yhtenäinen nuoli osoittaa nousun, katkoviiva yläpuolisen askelman ja pistekatkoviiva leikkaustason. C ja D katsovat vastakkaisiin suuntiin.</small>';
