@@ -1,0 +1,9 @@
+/* Match the drawing origin to the physical A3 sheet when printing. */
+@media print {
+  main {
+    width: 420mm;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+}
