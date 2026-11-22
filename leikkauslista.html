@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portaikon osakohtainen leikkauslista | KIDE</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f3ef;color:#1d3033;font:16px/1.5 system-ui,sans-serif}main{max-width:65rem;margin:auto;padding:clamp(1rem,4vw,2.5rem)}
+h1,h2{line-height:1.15}h1{font-size:clamp(1.8rem,5vw,2.8rem);margin:.7rem 0}h2{font-size:1.25rem}a{color:#245854}
+section,form{background:#fff;padding:1rem;margin-top:1rem;border:1px solid #bcc8c3;border-radius:.35rem}
+fieldset{border:0;padding:0;margin:0 0 1rem}legend{font-weight:700;margin-bottom:.7rem}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,14rem),1fr));gap:.75rem}
+label{display:block;font-weight:600}input{box-sizing:border-box;width:100%;display:block;padding:.55rem;border:1px solid #7a8b87;border-radius:.25rem;font:inherit;color:inherit}
+button{padding:.65rem .9rem;background:#194640;color:white;border:0;border-radius:.25rem;font:600 1rem system-ui}button:disabled{opacity:.5}
+#status,#import-status{min-height:1.4em}.toolbar{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+dl{display:grid;grid-template-columns:1fr 1.45fr;gap:.4rem .75rem}dt{font-weight:600}dd{margin:0}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:.9rem}th,td{text-align:left;vertical-align:top;padding:.35rem;border-bottom:1px solid #b6c1bc}tr{break-inside:avoid}
+@media print{body{background:white;color:black}.controls{display:none!important}main{max-width:none;padding:0}section{border:0;padding:0}.scroll{overflow:visible}table{font-size:8pt}}
+</style>
+</head>
+<body><main>
+<a class="controls" href="index.html">← Palaa porraslaskuriin</a>
+<h1>Portaikon osakohtainen leikkauslista</h1>
+<form id="dimensions" class="controls">
+<fieldset><legend>LP1 · Alimman leveän askelman etupala</legend>
+<div class="fields">
+<label>OSB:n etureunan leveys (mm)<input id="width" type="number" min="1" step="0.1" required inputmode="decimal"></label>
+<label>Valmiista lattiasta OSB:n päälle (mm)<input id="height" type="number" min="1" step="0.1" required inputmode="decimal"></label>
+<label>Parketin paksuus (mm)<input id="thickness" type="number" min="1" step="0.1" required inputmode="decimal" value="15"></label>
+<label>Kannen pintasäle huulloksen päällä (mm)<input id="skin" type="number" min="0.1" step="0.1" required inputmode="decimal" value="3.5"></label>
+<label>Sovitusvara per pää (mm)<input id="clearance" type="number" min="0" step="0.1" required inputmode="decimal" value="2.5"></label>
+</div></fieldset>
+<fieldset><legend>Päätyviilun pituuslisä</legend>
+<p>Mittaa raakapään tasosta viilun ulkopintaan. Upotettu viilu antaa arvon 0. Jätä avoimeksi, jos et ole mitannut.</p>
+<div class="fields">
+<label>Vasen pää (mm)<input id="left-end" type="number" min="0" step="0.1" inputmode="decimal"></label>
+<label>Oikea pää (mm)<input id="right-end" type="number" min="0" step="0.1" inputmode="decimal"></label>
+</div></fieldset>
+<div class="toolbar"><button type="submit">Laske LP1</button><button type="button" id="print" disabled>Tulosta tai tallenna PDF</button></div>
+<p id="status" role="status"></p>
+</form>
+<section id="result" hidden aria-labelledby="lp1-title">
+<h2 id="lp1-title">LP1 · Alin leveä etupala</h2>
+<p><strong>Sovitusluonnos.</strong> Varmista korkeus huulletulla kansikoepalalla vasemmalta, keskeltä ja oikealta.</p>
+<dl><dt>Valmis pituus</dt><dd id="finished"></dd><dt>Korkeus C–D</dt><dd id="cut-height"></dd><dt>Paksuus</dt><dd id="cut-thickness"></dd><dt>Raakapään katkaisumitta</dt><dd id="raw"></dd></dl>
+<p id="basis"></p>
+</section>
+<section class="controls">
+<h2>Vertaa olemassa olevaan sahauslistaan</h2>
+<p>Voit tuoda työmaan CSV-listan tähän laitteeseen. LP1 lasketaan yllä olevista mitoista, ja tuodun LP1:n mitat näkyvät vertailuna. Muiden osien rivit tulostetaan CSV:n mukaisina.</p>
+<label>Valitse CSV omalta laitteeltasi<input id="csv" type="file" accept=".csv,text/csv"></label>
+<p id="import-status" role="status"></p>
+</section>
+<section id="comparison" hidden><h2>LP1 · vertailu tuotuun listaan</h2><p id="compare-text"></p></section>
+<section id="other" hidden><h2>Muut osat · tuotu sahauslista</h2><p>Rivit ovat tuodusta lähdetiedostosta. Tarkista aihiot, pontit ja työstöt ennen katkaisua.</p><div class="scroll"><table><thead id="head"></thead><tbody id="rows"></tbody></table></div></section>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const mm = new Intl.NumberFormat("fi-FI", {maximumFractionDigits:2});
+const format = value => mm.format(value);
+const number = id => $(id).valueAsNumber;
+const rounded = value => Math.round(value * 100) / 100;
+function calculate({width,height,thickness,skin,gap,left,right}) {
+  const length = rounded(width - 2 * gap);
+  const vertical = rounded(height + thickness - skin);
+  if (skin >= thickness || length <= 0) throw new Error("Tarkista mitat. Pintasäleen on oltava parkettia ohuempi ja sovitusvaran jätettävä osalle positiivinen pituus.");
+  const raw = Number.isFinite(left) && Number.isFinite(right) ? rounded(length-left-right) : null;
+  if (raw !== null && raw <= 0) throw new Error("Päätyjen pituuslisät ylittävät osan valmiin pituuden.");
+  return {length,vertical,thickness,raw};
+}
+function parseCsv(text) {
+  const records=[]; let row=[], field="", quoted=false;
+  const input=text.replace(/^\uFEFF/,"").replace(/\r\n?/g,"\n");
+  for(let i=0;i<input.length;i++) {
+    const char=input[i];
+    if(char === '"'){
+      if(quoted && input[i+1] === '"'){field+='"';i++;}
+      else quoted=!quoted;
+    } else if(!quoted && (char===";" || char==="\n")){
+      row.push(field);field="";
+      if(char==="\n"){if(row.some(Boolean)) records.push(row);row=[];}
+    } else field+=char;
+  }
+  if(quoted) throw new Error("CSV:n lainausmerkkejä ei voitu lukea.");
+  if(row.length || field){row.push(field);records.push(row);}
+  const [header,...data]=records;
+  if(!header || ["Lauta","Katkaisu","Osa","Aihio mm"].some(key=>!header.includes(key)) || data.some(row=>row.length!==header.length))
+    throw new Error("Tarvitaan puolipisteillä erotettu sahaus-CSV, jossa ovat Lauta, Katkaisu, Osa ja Aihio mm.");
+  return {header,data};
+}
+let latest=null, imported=null;
+const fields=()=>({width:number("width"),height:number("height"),thickness:number("thickness"),skin:number("skin"),gap:number("clearance"),left:number("left-end"),right:number("right-end")});
+function setText(id,value){$(id).textContent=value;}
+function isLp1(name){return /^LP1(?:\s|$)/i.test(name.trim());}
+function compare(){
+  $("comparison").hidden=true;
+  if(!latest || !imported) return;
+  const index=imported.header.indexOf("Osa");
+  const found=imported.data.filter(row=>isLp1(row[index]));
+  if(found.length!==1){setText("compare-text","CSV:stä ei löytynyt yhtä yksiselitteistä LP1-riviä.");$("comparison").hidden=false;return;}
+  const dims=found[0][imported.header.indexOf("Aihio mm")];
+  const split=dims.split(/[×x]/i).map(x=>Number(x.replace(/\s/g,"").replace(",", ".")));
+  const actual=[latest.length,latest.vertical,latest.thickness];
+  const match=split.length===3 && actual.every((value,i)=>value===split[i]);
+  setText("compare-text","Tuotu LP1: "+dims+" mm. "+(match?"Kolme listamittaa täsmäävät.":"Laskettu rivi poikkeaa tuodusta listasta.")+" Mahdollinen päätyviilun pituuslisä tarkistetaan erikseen.");
+  $("comparison").hidden=false;
+}
+$("dimensions").addEventListener("input",()=>{
+  latest=null;$("result").hidden=true;$("comparison").hidden=true;$("print").disabled=true;
+  setText("status","");
+});
+$("dimensions").addEventListener("submit",event=>{
+  event.preventDefault();
+  const p=fields();
+  try{
+    latest=calculate(p);
+    setText("finished",format(latest.length)+" mm");
+    setText("cut-height",format(latest.vertical)+" mm");
+    setText("cut-thickness",format(latest.thickness)+" mm");
+    setText("raw",latest.raw===null?"Avoin · tarkista pituuslisä molemmista päistä":format(latest.raw)+" mm");
+    setText("basis","C–D = "+format(p.height)+" + "+format(p.thickness)+" − "+format(p.skin)+" mm. Valmis pituus = "+format(p.width)+" − 2 × "+format(p.gap)+" mm.");
+    setText("status","LP1 päivitetty.");$("result").hidden=false;$("print").disabled=false;compare();
+  }catch(error){setText("status",error.message);}
+});
+function tableRow(values,header){
+  const row=document.createElement("tr");
+  for(const entry of values){const cell=document.createElement(header?"th":"td");cell.textContent=entry;if(header)cell.scope="col";row.append(cell);}
+  return row;
+}
+$("csv").addEventListener("change",async()=>{
+  imported=null;$("other").hidden=true;compare();setText("import-status","");
+  const file=$("csv").files[0];if(!file)return;
+  try {
+    if(file.size>2_000_000)throw new Error("Valitse enintään 2 Mt:n sahauslista.");
+    imported=parseCsv(await file.text());
+    const index=imported.header.indexOf("Osa");
+    const others=imported.data.filter(row=>!isLp1(row[index]));
+    $("head").replaceChildren(tableRow(imported.header,true));
+    $("rows").replaceChildren(...others.map(row=>tableRow(row,false)));
+    $("other").hidden=others.length===0;
+    setText("import-status",imported.data.length+" riviä tuotu. Tietoja ei lähetetty.");
+    compare();
+  }catch(error){setText("import-status",error.message);}
+});
+$("print").addEventListener("click",()=>{if(latest)window.print();});
+</script>
+</body></html>
