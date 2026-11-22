@@ -32,7 +32,7 @@ svg [data-viiva="runkoleikkaus"]{stroke-width:var(--runkoleikkaus)}
 <label>Vapaa leveys sivupintojen välissä (mm)<input id="siteW" type="number" step="1" min="1"></label>
 <label>Vapaa syvyys takaseinästä alapään tilarajaan (mm)<input id="siteD" type="number" step="1" min="1"></label></div>
 <label class="check"><input type="checkbox" id="measured"> Käytä työmaan korkoja kaikissa piirustuksissa ja runkotaulukossa</label><p id="siteReport" role="status"></p></details>
-<p id="error" class="err" role="status"></p><div id="results"><a class="feedbackJump" href="#feedback">Anna palautetta kuvasta</a><h2>Arkkitehdin piirustukset</h2><div class="metrics" id="metrics" aria-live="polite"></div><p id="stride" aria-live="polite"></p><fieldset id="strideReview" hidden><legend>Arkkitehdin kuittaus</legend><label class="check"><input id="strideAck" type="checkbox">Olen tarkistanut tämän mitoituksen ja hyväksyn poikkeaman askelrytmin suosituksesta.</label><p>Kuittaa ennen PDF- tai IFC-vientiä. Mitoituksen muutos vaatii uuden kuittauksen.</p></fieldset>
+<p id="error" class="err" role="status"></p><div id="results"><a class="feedbackJump" href="#feedback">Anna palautetta kuvasta</a><h2>Arkkitehdin piirustukset</h2><div class="metrics" id="metrics" aria-live="polite"></div><p id="stride" aria-live="polite"></p><fieldset id="strideReview" hidden><legend>Valitse etenemä</legend><p id="goingAdvice"></p><button type="button" id="applyGoing" hidden></button><p id="keepGoing"></p><label class="check"><input id="strideAck" type="checkbox">Olen tarkistanut tämän mitoituksen ja hyväksyn poikkeaman askelrytmin suosituksesta.</label><p>Kuittaa ennen PDF- tai IFC-vientiä. Mitoituksen muutos vaatii uuden kuittauksen.</p></fieldset>
 <button type="button" id="openChoices" aria-haspopup="dialog">Avaa arkkitehdin valintataulukko</button><dialog id="choiceDialog" aria-labelledby="choiceHeading"><button type="button" class="dismiss" autofocus>Sulje</button><h2 id="choiceHeading">Arkkitehdin valintataulukko</h2><p>Kaikki mitat millimetreinä. Valitse kerroskorkeus riviltä päivittääksesi piirustukset. Aukkopituudet mitataan valmiista takaseinästä.</p><div class="scroll"><table><thead><tr><th>Kerroskorkeus</th><th>Vapaa huonekorkeus</th><th>Nousut</th><th>Tila L × S</th><th>Yläsyöksyn aukko A/B</th><th>Alaboksin aukko A</th><th>Alaboksin aukko B</th><th>Vapaa korkeus A</th><th>Vapaa korkeus B</th></tr></thead><tbody id="rows"></tbody></table></div></dialog><details id="downloads"><summary>Lataa piirustukset ja tietomalli</summary><button type="button" id="printSheets">Tallenna A3-piirustukset PDF-tiedostoksi</button><button type="button" id="exportIfc">Lataa portaan tilavarausmalli (IFC4)</button><p>Valitse tulostusikkunassa Tallenna PDF-tiedostona. IFC sisältää portaan valmiin ulkomuodon millimetreinä.</p></details><section id="mobileOpenings" aria-label="Aukkojen vertailu"><h2>Valitse aukko</h2><div id="openingButtons"><button type="button" data-opening="A">A · Suorakaiteinen aukko<strong></strong></button><button type="button" data-opening="B">B · Porrastettu aukko<strong></strong></button></div><p id="openingFacts"></p><button type="button" id="openingZoom" aria-pressed="false">Suurenna mittakuva</button><div id="openingView"></div></section><section id="arkit"><details open id="sheet1"><summary>Arkki 1 · Portaikon valmiit mitat</summary><article id="ark1"></article></details><details open id="sheet2"><summary>Arkki 2 · A- ja B-aukkojen vertailu</summary><article id="ark2"></article></details></section><details id="alakerta"><summary>Alakerran pohja</summary><div class="grid"><figure id="lower"></figure><article id="dims"></article></div>
 </details><details id="pituudet"><summary>Yläkerran aukko ja pituusleikkaus L–L</summary><p>A ja B on kohdistettu samaan valmiiseen takaseinään. Nuoli portaassa osoittaa noususuunnan.</p><label>Aukkovaihtoehto<select id="choice"><option value="">Vertaa A:ta ja B:tä</option><option value="A">A · Suorakaiteinen aukko</option><option value="B">B · Porrastettu aukko</option></select></label><p id="chosen" aria-live="polite"></p><div class="grid" id="compare"></div>
 </details><details id="poikki"><summary>Poikkileikkaus kahdesta suunnasta</summary><p>C–C ja D–D ovat samassa kohdassa. Vastakkaiset katsesuunnat osoittavat, kummalla puolella kapea askelma ja yläsyöksy sijaitsevat.</p><div class="grid" id="cross"></div>
@@ -497,6 +497,29 @@ function updateApproval(){
  for(const id of ['printSheets','exportIfc'])el(id).disabled=blocked;
 }
 el('strideAck').addEventListener('change',updateApproval);
+el('applyGoing').addEventListener('click',()=>{
+ const going=el('going');
+ going.value=el('applyGoing').dataset.going;
+ going.dispatchEvent(new Event('change',{bubbles:true}));
+ el('stride').scrollIntoView({block:'center'});
+});
+function suggestGoing(m){
+ const button=el('applyGoing');
+ const options=[...el('going').options].map(o=>Number(o.value)).filter(v=>{
+  const rhythm=2*m.rise+v;
+  return v%5===0 && rhythm>=620 && rhythm<=640;
+ }).sort((a,b)=>Math.abs(a-m.going)-Math.abs(b-m.going));
+ const best=options[0];
+ button.hidden=best===undefined;
+ if(best!==undefined){
+  button.dataset.going=best;
+  button.textContent='Valitse '+best+' mm:n etenemä';
+  el('goingAdvice').textContent='Ehdotus: '+best+' mm:n etenemällä askelrytmi on '+num(2*m.rise+best)+' mm. Nousu pysyy samana.';
+ }else{
+  el('goingAdvice').textContent='Näillä korkeuksilla mikään valittavista etenemistä ei tuo askelrytmiä välille 620–640 mm.';
+ }
+ el('keepGoing').textContent='Pidä '+m.going+' mm:n etenemä kuittaamalla poikkeama.';
+}
 function render(){
  el('shareStatus').textContent='';el('manualShare').hidden=true;
  const site=el('measured').checked, right=el('hand').value==='right';
@@ -544,6 +567,7 @@ function render(){
  if(reviewDimensions!==dimensions)el('strideAck').checked=false;
  reviewDimensions=dimensions;
  el('strideReview').hidden=stride>=620 && stride<=640;
+ if(!el('strideReview').hidden)suggestGoing(m);
  updateApproval();
  el('stride').innerHTML='<b>Askelrytmi · 2 × nousu + etenemä</b><br>2 × '+num(m.rise,1)+' + '+m.going+' ≈ '+num(stride)+' mm. '+(stride>=620&&stride<=640?'Ohjeen vertailuvälillä.':'Ohjeen vertailuvälin ulkopuolella.')+' Tavoite 630 mm · ohjeellinen vertailuväli 620–640 mm. Asuinhuoneiston sisäportaassa nousun enimmäismitta on 190 mm. <a href="https://admin.espoo.fi/sites/default/files/2021-10/Espoon%20esteett%C3%B6m%C3%A4n%20rakentamisen%20ohje_0.pdf">Espoon ohje</a> · <a href="https://www.finlex.fi/fi/lainsaadanto/2017/1007">Asetus 1007/2017, 4 §</a>.';
  updateWorkshop(m);yhtenaistaViivat();markChoice();mobileOpenings(m);
