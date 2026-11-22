@@ -91,7 +91,7 @@ function drawArchitectSheets(m,right){
  }
  function profile(left,base,wide,opening){
   const dir=(right===wide)?1:-1;
-  const x=v=>left+(dir===1?v:D+270-v)*scale,y=z=>base-z*scale;
+  const x=v=>left+(dir===1?v:D+m.treadDepth-v)*scale,y=z=>base-z*scale;
   const seg=(a,b,c,d,w=.25,dash='')=>line(x(a),y(b),x(c),y(d),w,dash);
   seg(0,0,D+200,0);
   for(let i=1;i<n;i++){
@@ -106,10 +106,10 @@ function drawArchitectSheets(m,right){
   const upperCut=wide;
   for(let i=1;i<n;i++){
    const a=850+(i-1)*m.going,z=(n+i)*r,w=upperCut?.7:.25;
-   seg(a,z,a+270,z,w);seg(a+270,z,a+270,z-m.box,w);seg(a+270,z-m.box,a,z-m.box,w);seg(a,z-m.box,a,z,w);
+   seg(a,z,a+m.treadDepth,z,w);seg(a+m.treadDepth,z,a+m.treadDepth,z-m.box,w);seg(a+m.treadDepth,z-m.box,a,z-m.box,w);seg(a,z-m.box,a,z,w);
   }
   const e=opening?m[opening]:m.A;
-  seg(e,H,D+270,H,.7);seg(e,m.room,D+270,m.room,.7);seg(e,H,e,m.room,.7);
+  seg(e,H,D+m.treadDepth,H,.7);seg(e,m.room,D+m.treadDepth,m.room,.7);seg(e,H,e,m.room,.7);
   text(x(340),y(H/2)-1.8,level(H/2),2.7);
   text(x(D+160),y(H)-1.5,level(H),2.7);
   if(opening){
@@ -128,7 +128,7 @@ function drawArchitectSheets(m,right){
    const ux=850+m.going;dimH(x(ux),x(ux+m.going),y((n+2)*r)-7,f(m.going));
   }
   run(stations.lower,x,base+4,false);
-  run(stations.levels,y,left+(D+270)*scale+8,true);
+  run(stations.levels,y,left+(D+m.treadDepth)*scale+8,true);
  }
  function front(left,base){
   for(const p of endPanels().filter(p=>p.state==="yes")){const px=left+(p.side==="left"?0:W*scale);const tx=px+(p.side==="left"?5:-5);line(px,base-r*scale/2,tx,base-1,.13);text(tx,base-1,p.code,2.7);}
@@ -153,7 +153,7 @@ function drawArchitectSheets(m,right){
  text(120,65,'Tasanteen siirto '+f(m.going)+' mm',3,'start');
  text(117,73,'Kaidevara 100 mm',3,'start');
  text(117,86,'L–L ja M–M',3.4,'start');text(117,92,'160 mm sivureunasta',3,'start');
- text(117,111,'Yläaskelma',3.4,'start');text(117,117,'Syvyys 270',3,'start');text(117,123,'Etenemä '+f(m.going),3,'start');text(117,129,'Vapaa rako 100',3,'start');
+ text(117,111,'Yläaskelma',3.4,'start');text(117,117,'Syvyys '+f(m.treadDepth),3,'start');text(117,123,'Etenemä '+f(m.going),3,'start');text(117,129,'Vapaa rako 100',3,'start');
  finish('ark1','Tilavaraus '+f(W)+' × '+f(D)+' · kerroskorkeus '+f(H)+' · '+n+' + '+n+' nousua · yksi nousu '+f(r));
  header('Yläkerran vapaan aukon vertailu',2);
  for(const [k,off] of [['A',0],['B',207]]){
