@@ -15,11 +15,26 @@ button{padding:.65rem .9rem;background:#194640;color:white;border:0;border-radiu
 #status,#import-status{min-height:1.4em}.toolbar{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
 dl{display:grid;grid-template-columns:1fr 1.45fr;gap:.4rem .75rem}dt{font-weight:600}dd{margin:0}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:.9rem}th,td{text-align:left;vertical-align:top;padding:.35rem;border-bottom:1px solid #b6c1bc}tr{break-inside:avoid}
 @media print{body{background:white;color:black}.controls{display:none!important}main{max-width:none;padding:0}section{border:0;padding:0}.scroll{overflow:visible}table{font-size:8pt}}
+@media print{body[data-print-mode="full"] #result,body[data-print-mode="full"] #comparison,body[data-print-mode="full"] #other,body:not([data-print-mode="full"]) #full-result{display:none!important}}
 </style>
 </head>
 <body><main>
 <a class="controls" href="index.html">← Palaa porraslaskuriin</a>
 <h1>Portaikon osakohtainen leikkauslista</h1>
+<section class="controls" aria-labelledby="full-title">
+<h2 id="full-title">Laske koko pintaparketin sahauslista</h2>
+<p>Valitse työmaamitat sisältävä JSON-tiedosto. Laskuri muodostaa alaboksin, kääntötason ja yläsyöksyn osat sekä sijoittaa ne varastolaudoille. Mittatiedosto käsitellään tällä laitteella.</p>
+<label>Työmaan lähtömitat (JSON)<input id="full-input" type="file" accept=".json,application/json"></label>
+<p><a id="full-template" href="#">Lataa täytettävä lähtötietopohja</a></p>
+<div class="toolbar"><button type="button" id="full-print" disabled>Tulosta koko leikkauslista</button><button type="button" id="full-download" disabled>Lataa laskettu CSV</button></div>
+<p id="full-status" role="status"></p>
+</section>
+<section id="full-result" hidden aria-labelledby="full-output-title">
+<h2 id="full-output-title">Laskettu osakohtainen sahauslista</h2>
+<p id="full-summary"></p>
+<p><strong>Sovitusluonnos.</strong> Valmis tavoite kertoo osan ulkomitan. Aihioissa on sovitusvara. Vahvista huullokset, päädyt ja palkkilovet koepalalla ennen sarjatyöstöä.</p>
+<div class="scroll"><table><thead id="full-head"></thead><tbody id="full-rows"></tbody></table></div>
+</section>
 <form id="dimensions" class="controls">
 <fieldset><legend>LP1 · Alimman leveän askelman etupala</legend>
 <div class="fields">
@@ -53,6 +68,7 @@ dl{display:grid;grid-template-columns:1fr 1.45fr;gap:.4rem .75rem}dt{font-weight
 <section id="comparison" hidden><h2>LP1 · vertailu tuotuun listaan</h2><p id="compare-text"></p></section>
 <section id="other" hidden><h2>Muut osat · tuotu sahauslista</h2><p>Rivit ovat tuodusta lähdetiedostosta. Tarkista aihiot, pontit ja työstöt ennen katkaisua.</p><div class="scroll"><table><thead id="head"></thead><tbody id="rows"></tbody></table></div></section>
 </main>
+<script src="leikkausmoottori.js?v=1"></script>
 <script>
 "use strict";
 const $ = id => document.getElementById(id);
@@ -142,6 +158,61 @@ $("csv").addEventListener("change",async()=>{
     compare();
   }catch(error){setText("import-status",error.message);}
 });
-$("print").addEventListener("click",()=>{if(latest)window.print();});
+$("print").addEventListener("click",()=>{if(latest){delete document.body.dataset.printMode;window.print();}});
+
+let generated = null;
+const fullColumns = ["Lauta", "Katkaisu", "Kaista", "Osa", "Pituus mm", "Leveys tai korkeus mm", "Paksuus mm", "Mittatyyppi", "Pontti", "Sovitus"];
+const rowValues = p => [p.board, p.cut, p.strip, p.code + " · " + p.name, format(p.length), format(p.width), format(p.thickness), p.kind, p.joint, p.work];
+function download(content, name, type) {
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(new Blob([content], {type}));
+  link.download = name;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+}
+const template = {
+  version:1,
+  material:{thickness:null, skin:null, sideGap:null, kerf:null, boardLength:null, narrowWidth:null, wideWidth:null, narrowBoards:null, wideBoards:null, narrowBoardReserve:null},
+  lower:{tiers:null, osbWidth:null, floorToOsb:null, regularFaceHeight:null, narrowDepth:null, narrowOsbWidth:null, largestNarrowOsbWidth:null, narrowTrim:null, lowerStripOpening:null, wideDepth:null, visibleSide:null},
+  landing:{osbDepth:null, beamWidth:null, beamGap:null, beamNearFromRight:null, beamAtOsb:null, beamOverOsb:null, middleBoards:null},
+  upper:{treads:null, woodWidth:null, woodDepth:null, overhang:null, lengthTrim:null, frontStripDepth:null, pitchGoing:null, pitchRise:null, gap:null, beamFromFinishedLeft:null, beamWidth:null, bottomBeamInnerDatum:null, rearBeamInnerDatum:null, notchRiseByTread:[]}
+};
+$("full-template").addEventListener("click",event=>{
+  event.preventDefault();
+  download(JSON.stringify(template,null,2),"porras-lahtomitat.json","application/json");
+});
+$("full-input").addEventListener("change",async()=>{
+  generated = null;
+  $("full-result").hidden = true;
+  $("full-print").disabled = $("full-download").disabled = true;
+  setText("full-status","");
+  const selected = $("full-input").files[0];
+  if (!selected) return;
+  try {
+    if (selected.size > 64_000) throw new Error("Valitse enintään 64 kt:n lähtötietotiedosto.");
+    const input = JSON.parse((await selected.text()).replace(/^\uFEFF/,""));
+    generated = window.PorrasLeikkaus.generate(input);
+    $("full-head").replaceChildren(tableRow(fullColumns,true));
+    $("full-rows").replaceChildren(...generated.rows.map(p => tableRow(rowValues(p),false)));
+    const use = Object.entries(generated.boards).map(([width,count]) => count + " lautaa × " + width + " mm").join(" · ");
+    setText("full-summary",generated.rows.length + " osariviä · " + use + " · laudan pituus " + format(generated.stockLength) + " mm.");
+    setText("full-status","Koko sahauslista laskettu lähtömitoista. " + generated.rows.length + " osariviä.");
+    $("full-result").hidden = false;
+    $("full-print").disabled = $("full-download").disabled = false;
+  } catch(error) { setText("full-status", error.message); }
+});
+$("full-print").addEventListener("click",()=>{
+  if (!generated) return;
+  document.body.dataset.printMode = "full";
+  window.print();
+});
+window.addEventListener("afterprint",()=>{delete document.body.dataset.printMode;});
+const quote = value => '"' + String(value).replaceAll('"','""') + '"';
+$("full-download").addEventListener("click",()=>{
+  if (!generated) return;
+  const csv = [fullColumns, ...generated.rows.map(rowValues)].map(values => values.map(quote).join(";")).join("\r\n");
+  download("\uFEFF"+csv,"Pintaparketti-laskettu-sahauslista.csv","text/csv;charset=utf-8");
+});
+
 </script>
 </body></html>
