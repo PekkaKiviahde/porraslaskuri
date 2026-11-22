@@ -9,7 +9,7 @@ function architectStations(m){
 function drawArchitectSheets(m,right){
  const n=m.n,r=m.rise,D=m.depth,W=1800,H=m.H;
  const scale=Math.min(1/30,102/H,112/D);
- const f=v=>num(v,Math.abs(v-Math.round(v))<1e-7?0:1);
+ const f=v=>num(v);
  let parts=[];
  function line(x,y,X,Y,w=.25,dash=''){
   parts.push('<line x1="'+x+'" y1="'+y+'" x2="'+X+'" y2="'+Y+'" stroke="#142629" stroke-width="'+w+'" stroke-dasharray="'+(dash||'none')+'"/>');
@@ -123,7 +123,7 @@ function drawArchitectSheets(m,right){
    dimH(x(0),x(850),y((n+1)*r)-5,'850');
    const i=wide?3:4,a=D-(i-1)*m.going,step=wide?2*m.going:m.going;
    dimH(x(a),x(a-step),y(i*r)+5,f(step));
-   dimV(y(i*r),y((i-(wide?2:1))*r),x(a)+dir*4,f((wide?2:1)*r));
+   dimV(y(i*r),y((i-(wide?2:1))*r),x(a)+dir*4,wide?f(2*r):num(r,1));
 
    const ux=850+m.going;dimH(x(ux),x(ux+m.going),y((n+2)*r)-7,f(m.going));
   }
@@ -154,7 +154,7 @@ function drawArchitectSheets(m,right){
  text(117,73,'Kaidevara 100 mm',3,'start');
  text(117,86,'L–L ja M–M',3.4,'start');text(117,92,'160 mm sivureunasta',3,'start');
  text(117,111,'Yläaskelma',3.4,'start');text(117,117,'Syvyys '+f(m.treadDepth),3,'start');text(117,123,'Etenemä '+f(m.going),3,'start');text(117,129,'Vapaa rako 100',3,'start');
- finish('ark1','Tilavaraus '+f(W)+' × '+f(D)+' · kerroskorkeus '+f(H)+' · '+n+' + '+n+' nousua · yksi nousu '+f(r));
+ finish('ark1','Tilavaraus '+f(W)+' × '+f(D)+' · kerroskorkeus '+f(H)+' · '+n+' + '+n+' nousua · yksi nousu '+num(r,1));
  header('Yläkerran vapaan aukon vertailu',2);
  for(const [k,off] of [['A',0],['B',207]]){
   text(off+12,25,k+(k==='A'?' · Suorakaiteinen aukko':' · Porrastettu aukko'),4.5,'start');

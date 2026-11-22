@@ -37,7 +37,7 @@ function updateMaterials(m,top,front) {
     el('stockControls').addEventListener('input',render);
   }
   const length=readField('stockLength'),width=readField('stockWidth'),waste=readField('stockWaste');
-  if (!top || !front || ![length,width,waste].every(Number.isFinite) || length<=0 || width<=0 || waste<0 || waste>100 || top.total>=m.rise || front.total>=m.going) {
+  if (!top || !front || ![length,width,waste].every(Number.isFinite) || !Number.isInteger(length) || !Number.isInteger(width) || length<=0 || width<=0 || waste<0 || waste>100 || top.total>=m.rise || front.total>=m.going) {
     buy.textContent=supply.textContent='Tarkista pintakerrokset, levyaihion mitat ja hukkavara.';
     download.disabled=true;
     return;

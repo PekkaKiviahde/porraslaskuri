@@ -60,7 +60,7 @@ function stairIfc(m, right, opening, endPanelsArray) {
     upper.push(solid(right ? 0 : 950, 850+(i-1)*m.going, (m.n+i)*m.rise-m.box, 850, m.treadDepth, m.box));
   }
   function flight(name, solids) {
-    return add('IFCSTAIRFLIGHT', [guid(), '$', str(name), '$,$', placement, rep(solids), '$', m.n, m.n-1, real(m.rise), real(m.going), '.STRAIGHT.']);
+    return add('IFCSTAIRFLIGHT', [guid(), '$', str(name), '$,$', placement, rep(solids), '$', m.n, m.n-1, real(Math.round(m.rise*10)/10), real(m.going), '.STRAIGHT.']);
   }
   const landing = add('IFCSLAB', [guid(), '$', str('Kääntötason tilavaraus'), '$,$', placement,
     rep([solid(0, 0, 0, 1800, m.landing, m.H/2)]), '$,.LANDING.']);
@@ -71,7 +71,7 @@ function stairIfc(m, right, opening, endPanelsArray) {
   }
   const props = [];
   function measurement(name, value) {
-    props.push(prop(name, 'IFCLENGTHMEASURE('+real(value)+')'));
+    props.push(prop(name, 'IFCLENGTHMEASURE('+real(name==='Nousu'?Math.round(value*10)/10:Math.round(value))+')'));
   }
   for (const [name, value] of Object.entries({
     Kerroskorkeus:m.H, VälipohjanPaksuus:m.floor, VapaaHuonekorkeus:m.room,
