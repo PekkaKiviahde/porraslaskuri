@@ -36,7 +36,7 @@ svg [data-viiva="runkoleikkaus"]{stroke-width:var(--runkoleikkaus)}
 <form id="feedbackForm" method="post" action="https://docs.google.com/forms/d/e/1FAIpQLSfdCbaVCbprC9l2OoBw_eStLkESyYojKCtVgdwmDmy-QO8Ihw/formResponse?embedded=true" target="feedbackReceipt">
 <label>Kuva tai työvaihe<select id="feedbackTopic"><option>Yleinen palaute</option><option>Arkkitehdin arkki 1</option><option>A- ja B-aukkojen vertailu</option><option>Timpurin runkoarkki</option><option>Osaluettelo</option><option>Hankinta ja toimitus</option></select></label>
 <label>Viestisi<textarea id="feedbackMessage" required maxlength="3500" rows="3" placeholder="Kerro omin sanoin"></textarea></label>
-<input type="hidden" name="entry.497987231" id="feedbackPayload"><button type="submit">Lähetä viesti</button></form>
+<input type="hidden" name="entry.497987231" id="feedbackPayload"><a id="feedbackAttachment" href="https://docs.google.com/forms/d/e/1FAIpQLSd4msn92tCHcH9Jy_EyBPh6xHZ8fvRgyrN36X5B2xtVgenZsw/viewform" target="_blank" rel="noopener">Lisää kuvakaappaus tai tiedosto</a><small>Liite avataan Google-lomakkeella. Kirjaudu Googleen, valitse tiedosto ja lähetä viesti siellä. Pelkän tekstin voit lähettää tästä ilman kirjautumista.</small><button type="submit">Lähetä tekstipalaute</button></form>
 <div id="feedbackAck" hidden><p>Vastaanottajan kuittaus</p><iframe name="feedbackReceipt" title="Google Formsin vastaus lähetykseen" style="width:100%;height:12rem;border:0"></iframe></div>
 <a href="https://docs.google.com/forms/d/e/1FAIpQLSfdCbaVCbprC9l2OoBw_eStLkESyYojKCtVgdwmDmy-QO8Ihw/viewform" target="_blank" rel="noopener">Avaa palautelomake erikseen</a></details></main>
 <script src="qrcode.js"></script><script src="arkkitehti.js?v=paadyt1"></script><script src="materials.js"></script><script>
@@ -535,6 +535,14 @@ function updateShareQr(){
 }
 document.querySelector('.feedbackJump').addEventListener('click',()=>{el('feedback').open=true;});
 if(location.hash==='#feedback')el('feedback').open=true;
+const attachmentLink=el('feedbackAttachment');
+const attachmentForm=attachmentLink.href;
+attachmentLink.addEventListener('click',()=>{
+ const url=new URL(attachmentForm);
+ const message=el('feedbackMessage').value.trim();
+ url.searchParams.set('entry.1754621586',[el('feedbackTopic').value,message].filter(Boolean).join(' · '));
+ attachmentLink.href=url.href;
+});
 el('feedbackForm').addEventListener('submit',event=>{
  const field=el('feedbackMessage'), message=field.value.trim();
  if(!message){event.preventDefault();field.focus();return;}
