@@ -13,7 +13,7 @@ svg [data-viiva="reuna"]{stroke-width:var(--reuna)}
 svg [data-viiva="mitta"]{stroke-width:var(--mitta)}
 svg [data-viiva="runkoleikkaus"]{stroke-width:var(--runkoleikkaus)}
 #choiceDialog{max-width:min(96vw,1100px);max-height:85vh;padding:22px;border:1px solid #82958f;border-radius:6px}#choiceDialog h2{margin-top:0}#choiceDialog::backdrop{background:#17282a70}.dismiss{float:right}#openChoices{padding:9px 15px;margin:16px 0}@media print{#arkit details{display:block;margin:0;padding:0;border:0;break-after:page}#arkit summary{display:none}#arkit details::details-content{display:contents;content-visibility:visible}} </style><main><header><h1>Portaikon tilavaraus</h1><p>Asunnon sisäinen paluuporras · Arkkitehdin luonnos</p></header>
-<form id="inputs" onsubmit="return false"><label>Huonekorkeus (mm)<input required type="number" min="2500" max="3000" step="1" id="room" value="2700"></label><label>Välipohjan kokonaispaksuus (mm)<input required type="number" min="1" max="3000" step="1" id="floor" value="550"></label><label>Kapeat askelmat noustessa<select id="hand"><option value="left">Vasemmalla</option><option value="right" selected>Oikealla</option></select></label><fieldset style='grid-column:1/-1;min-width:0'><legend>Alimman boksin päädyt</legend><p>Katso portaita alhaalta ylöspäin.</p><div class='fields'><label>Vasemmalle päätykappale?<select id='end-left'><option value='open'>Avoin</option><option value='yes'>Kyllä</option><option value='no'>Ei</option></select></label><label>Oikealle päätykappale?<select id='end-right'><option value='open'>Avoin</option><option value='yes'>Kyllä</option><option value='no'>Ei</option></select></label></div></fieldset></form><details id="sitebox"><summary>Työmaan tarkemitat</summary><p>Mittaa korkeudet samasta alakerran valmiin lattian lähtötasosta ±0,000. Keskeneräisessä kohteessa siirrä suunnitellut valmiit pinnat korkomerkein. Mittaa tila useasta kohdasta ja syötä pienin vapaa leveys ja syvyys.</p><div class="fields">
+<form id="inputs" onsubmit="return false"><label>Huonekorkeus (mm)<input required type="number" min="2500" max="3000" step="1" id="room" value="2700"></label><label>Välipohjan kokonaispaksuus (mm)<input required type="number" min="1" max="3000" step="1" id="floor" value="550"></label><label>Kapeat askelmat noustessa<select id="hand"><option value="left">Vasemmalla</option><option value="right" selected>Oikealla</option></select></label><fieldset style='grid-column:1/-1;min-width:0'><legend>Alimman boksin päädyt</legend><p>Katso portaita alhaalta ylöspäin.</p><div class='fields'><label>Vasemmalle päätykappale?<select id='end-left'><option value='open'>Avoin</option><option value='yes'>Kyllä</option><option value='no'>Ei</option></select></label><label>Oikealle päätykappale?<select id='end-right'><option value='open'>Avoin</option><option value='yes'>Kyllä</option><option value='no'>Ei</option></select></label></div></fieldset></form><p><button type="button" id="copyShare">Kopioi linkki näillä valinnoilla</button> <span id="shareStatus" role="status"></span></p><label id="manualShare" hidden>Jaettava linkki<input id="shareUrl" readonly type="url"></label><details id="sitebox"><summary>Työmaan tarkemitat</summary><p>Mittaa korkeudet samasta alakerran valmiin lattian lähtötasosta ±0,000. Keskeneräisessä kohteessa siirrä suunnitellut valmiit pinnat korkomerkein. Mittaa tila useasta kohdasta ja syötä pienin vapaa leveys ja syvyys.</p><div class="fields">
 <label>Valmiista lattiasta valmiiseen lattiaan (mm)<input id="siteH" type="number" step="any" min="1"></label>
 <label>Alalattiasta valmiiseen kattoon (mm)<input id="siteRoom" type="number" step="any" min="1"></label>
 <label>Vapaa leveys sivupintojen välissä (mm)<input id="siteW" type="number" step="any" min="1"></label>
@@ -423,6 +423,7 @@ function renderEndPanels(m,right){
  (pending.length?'<p>Avoinna: '+pending.map(p=>p.name.toLowerCase()+' pääty').join(', ')+'.</p>':'');
 }
 function render(){
+ el('shareStatus').textContent='';el('manualShare').hidden=true;
  const site=el('measured').checked,room=site?readField('siteRoom'):el('room').valueAsNumber,floor=site?readField('siteH')-room:el('floor').valueAsNumber,right=el('hand').value==='right';
  el('room').disabled=site;el('floor').disabled=site;el('siteReport').textContent='';
  const valid=Number.isFinite(room)&&room>=2500&&room<=3000&&Number.isFinite(floor)&&floor>0&&floor<=3000;
@@ -447,7 +448,43 @@ el('choice').addEventListener('change',render);
 for(const id of [...siteInputs,'measured','topBoard','topWood','frontBoard','frontWood']){el(id).addEventListener('input',render);el(id).addEventListener('change',render)}
 el('inputs').addEventListener('input',render);el('inputs').addEventListener('change',render);
 el('rows').addEventListener('click',e=>{let b=e.target.closest('button[data-height]');if(b){el('room').value=b.dataset.height;render();el('choiceDialog').close();el('sheet1').open=el('sheet2').open=true;el('sheet1').scrollIntoView()}});
-const initialRoom=Number(new URLSearchParams(location.search).get('huone'));if(initialRoom>=2500&&initialRoom<=3000)el('room').value=initialRoom;
+const shareFields={
+ huone:'room',valipohja:'floor',katisyys:'hand',vasen:'end-left',oikea:'end-right',
+ aukko:'choice',kerros:'siteH',vapaaKorkeus:'siteRoom',leveys:'siteW',syvyys:'siteD',
+ tyomaakorot:'measured',kansilevy:'topBoard',kansiparketti:'topWood',otsalevy:'frontBoard',otsaparketti:'frontWood'
+};
+const incoming=new URLSearchParams(location.search);
+for(const [key,id] of Object.entries(shareFields)){
+ if(!incoming.has(key))continue;
+ const field=el(id), value=incoming.get(key);
+ if(field.type==='checkbox')field.checked=value==='1';
+ else if(field.tagName==='SELECT'){
+  if(Array.from(field.options).some(option=>option.value===value))field.value=value;
+ }else{
+  const original=field.value;
+  field.value=value;
+  if(!field.value || !field.checkValidity())field.value=original;
+ }
+}
+el('copyShare').addEventListener('click',async()=>{
+ const url=new URL(location.pathname,location.origin);
+ for(const [key,id] of Object.entries(shareFields)){
+  const field=el(id);
+  if(!field.checkValidity()){field.reportValidity();return;}
+  if(field.type==='checkbox'){if(field.checked)url.searchParams.set(key,'1');}
+  else if(field.value!=='')url.searchParams.set(key,field.value);
+ }
+ if(el('results').hidden){el('shareStatus').textContent='Tarkista korkomitat ennen jakamista.';return;}
+ el('shareUrl').value=url.href;
+ el('manualShare').hidden=false;
+ try{
+  await navigator.clipboard.writeText(url.href);
+  el('shareStatus').textContent='Linkki kopioitu.';
+ }catch{
+  el('shareUrl').focus();el('shareUrl').select();
+  el('shareStatus').textContent='Kopioi valittu osoite.';
+ }
+});
 render();
 if(["#neljas","#levyesitys","#ensimmainen-askelma"].includes(location.hash))el("runko").scrollIntoView();
 </script></html>
